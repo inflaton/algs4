@@ -1,83 +1,75 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = findProperty("main") ?: "com.inflaton.${findProperty("algorithm") ?: 'missingPackage.missingClass'}"
+
 buildscript {
   repositories {
-        jcenter()
-   }
-}
-
-plugins {
-    id "com.jfrog.bintray" version "1.7"
-}
-
-group = 'edu.princeton.cs'
-version = '1.0.1'
-
-
-allprojects {
-    repositories {
-        jcenter()
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'maven-publish'
-
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+  }
+  dependencies {
+    // https://github.com/sherter/google-java-format-gradle-plugin
+    classpath "gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.8"
+  }
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+// Require Java 8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+  mavenLocal()
+  mavenCentral()
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+// Describe all project deps. Use 'testCompile' for test dependencies and
+// 'compile' for project dependencies.
+dependencies {
+  compile fileTree(dir: 'lib', include: ['*.jar'])
+
+  // Apache commons lang
+  testCompile 'org.apache.commons:commons-lang3:3.6'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+  // Google Guava lib
+  testCompile group: 'com.google.guava', name: 'guava', version: '22.0'
+
+  // Google Truth test framework
+  // https://mvnrepository.com/artifact/com.google.truth/truth
+  testCompile group: 'com.google.truth', name: 'truth', version: '1.0'
+
+  // Test mocking framework
+  testCompile "org.mockito:mockito-core:1.+"
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+test {
+  dependsOn cleanTest
+  testLogging.showStandardStreams = true
+  useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId 'edu.princeton.cs'
-                    artifactId 'algs4'
-                    version '1.0.2'
-        }
-    }
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+  options.compilerArgs += [
+    '-Xlint:unchecked',
+    '-Xlint:deprecation'
+  ]
 }
 
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['MyPublication']
-    publish = true
-    override = false
-    pkg {
-        repo = 'maven'
-        name = 'algs4'
-        userOrg = 'algs4'
-        desc = 'Source Code for Algorithms, 4th Edition'
-        licenses = ['GPL-3.0']
-        vcsUrl = 'https://github.com/kevin-wayne/algs4.git'
-        websiteUrl = 'https://github.com/kevin-wayne/algs4'
-        labels = ['algorithms', 'java', 'Robert Sedgewick', 'Kevin Wayne']
-        publicDownloadNumbers = true
-        githubRepo = 'kevin-wayne/algs4'
-        githubReleaseNotesFile = 'README.md'
-        version {
-            name = '1.0.2'
-            vcsTag = '1.0.2'
-        }
-    }
+// Options when compiling tests
+compileTestJava {
+  options.encoding = 'UTF-8'
+  options.compilerArgs += [
+    '-Xlint:unchecked',
+    '-Xlint:deprecation'
+  ]
 }
 
-wrapper {
-  gradleVersion = '2.6'
+task buildDependenciesFolder(type: Copy) {
+  from configurations.compile
+  into './dependencies'
 }

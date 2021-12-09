@@ -6,7 +6,7 @@
  *
  *  This program takes an RE as a command-line argument and prints
  *  the lines from standard input having some substring that
- *  is in the language described by the RE. 
+ *  is in the language described by the RE.
  *
  *  % more tinyL.txt
  *  AC
@@ -28,41 +28,40 @@
 package edu.princeton.cs.algs4;
 
 /**
- *  The {@code GREP} class provides a client for reading in a sequence of
- *  lines from standard input and printing to standard output those lines
- *  that contain a substring matching a specified regular expression.
- *  <p>
- *  For additional documentation, see <a href="https://algs4.cs.princeton.edu/31elementary">Section 3.1</a> of
- *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
+ * The {@code GREP} class provides a client for reading in a sequence of lines from standard input
+ * and printing to standard output those lines that contain a substring matching a specified regular
+ * expression.
  *
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
+ * <p>For additional documentation, see <a
+ * href="https://algs4.cs.princeton.edu/31elementary">Section 3.1</a> of <i>Algorithms, 4th
+ * Edition</i> by Robert Sedgewick and Kevin Wayne.
+ *
+ * @author Robert Sedgewick
+ * @author Kevin Wayne
  */
 public class GREP {
 
-    // do not instantiate
-    private GREP() { }
+  // do not instantiate
+  private GREP() {}
 
-    /**
-     * Interprets the command-line argument as a regular expression
-     * (supporting closure, binary or, parentheses, and wildcard)
-     * reads in lines from standard input; writes to standard output
-     * those lines that contain a substring matching the regular
-     * expression.
-     *
-     * @param args the command-line arguments
-     */
-    public static void main(String[] args) { 
-        String regexp = "(.*" + args[0] + ".*)";
-        NFA nfa = new NFA(regexp);
-        while (StdIn.hasNextLine()) { 
-            String line = StdIn.readLine();
-            if (nfa.recognizes(line)) {
-                StdOut.println(line);
-            }
-        }
-    } 
-} 
+  /**
+   * Interprets the command-line argument as a regular expression (supporting closure, binary or,
+   * parentheses, and wildcard) reads in lines from standard input; writes to standard output those
+   * lines that contain a substring matching the regular expression.
+   *
+   * @param args the command-line arguments
+   */
+  public static void main(String[] args) {
+    String regexp = "(.*" + args[0] + ".*)";
+    NFA nfa = new NFA(regexp);
+    while (StdIn.hasNextLine()) {
+      String line = StdIn.readLine();
+      if (nfa.recognizes(line)) {
+        StdOut.println(line);
+      }
+    }
+  }
+}
 
 /******************************************************************************
  *  Copyright 2002-2020, Robert Sedgewick and Kevin Wayne.
