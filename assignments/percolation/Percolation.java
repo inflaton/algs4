@@ -63,7 +63,8 @@ public class Percolation {
 
   // is the site (row, col) full?
   public boolean isFull(int row, int col) {
-    return uf.find(0) == uf.find(getIndex(row, col));
+    final int index = getIndex(row, col);
+    return sites[index] && uf.find(0) == uf.find(index);
   }
 
   // returns the number of open sites
