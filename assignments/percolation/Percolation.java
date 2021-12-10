@@ -5,9 +5,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
   private final WeightedQuickUnionUF uf;
+  private WeightedQuickUnionUF ufWithBottom;
   private final int n;
   private final boolean[] sites;
   private int openSites;
+  private final int bottom;
 
   // creates n-by-n grid, with all sites initially blocked
   public Percolation(int n) {
@@ -15,9 +17,10 @@ public class Percolation {
       throw new IllegalArgumentException();
     }
     this.n = n;
-    int size = n * n + 1;
-    sites = new boolean[size];
-    uf = new WeightedQuickUnionUF(size);
+    bottom = n * n + 1;
+    sites = new boolean[bottom];
+    uf = new WeightedQuickUnionUF(bottom);
+    ufWithBottom = new WeightedQuickUnionUF(bottom + 1);
   }
 
   // opens the site (row, col) if it is not open already
@@ -31,22 +34,29 @@ public class Percolation {
     openSites++;
 
     if (col > 1 && isOpen(row, col - 1)) {
-      uf.union(index, index - 1);
+      union(index, index - 1);
     }
 
     if (col < n && isOpen(row, col + 1)) {
-      uf.union(index, index + 1);
+      union(index, index + 1);
     }
 
     if (row == 1) {
-      uf.union(index, 0);
+      union(index, 0);
     } else if (isOpen(row - 1, col)) {
-      uf.union(index, index - n);
+      union(index, index - n);
     }
 
-    if (row < n && isOpen(row + 1, col)) {
-      uf.union(index, index + n);
+    if (row == n) {
+      ufWithBottom.union(index, bottom);
+    } else if (isOpen(row + 1, col)) {
+      union(index, index + n);
     }
+  }
+
+  private void union(int p, int q) {
+    uf.union(p, q);
+    ufWithBottom.union(p, q);
   }
 
   private int getIndex(int row, int col) {
@@ -74,13 +84,7 @@ public class Percolation {
 
   // does the system percolate?
   public boolean percolates() {
-    for (int col = 1; col <= n; col++) {
-      if (isFull(n, col)) {
-        return true;
-      }
-    }
-
-    return false;
+    return ufWithBottom.find(0) == ufWithBottom.find(bottom);
   }
 
   // test client (optional)
