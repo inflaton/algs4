@@ -24,7 +24,10 @@ public class LineSegment {
      */
     public LineSegment(Point p, Point q) {
         if (p == null || q == null) {
-            throw new NullPointerException("argument is null");
+            throw new IllegalArgumentException("argument to LineSegment constructor is null");
+        }
+        if (p.equals(q)) {
+            throw new IllegalArgumentException("both arguments to LineSegment constructor are the same point: " + p);
         }
         this.p = p;
         this.q = q;
@@ -58,8 +61,7 @@ public class LineSegment {
      * @throws UnsupportedOperationException if called
      */
     public int hashCode() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("hashCode() is not supported");
     }
-
 }
 
