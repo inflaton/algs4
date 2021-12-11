@@ -1,3 +1,9 @@
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
+import java.util.Comparator;
+
 /******************************************************************************
  *  Compilation:  javac Point.java
  *  Execution:    java Point
@@ -7,11 +13,6 @@
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  ******************************************************************************/
-
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdDraw;
-
-import java.util.Comparator;
 
 public class Point implements Comparable<Point> {
 
@@ -80,19 +81,21 @@ public class Point implements Comparable<Point> {
    *     integer if this point is greater than the argument point
    */
   public int compareTo(Point that) {
+    if (that == null) {
+      throw new NullPointerException();
+    }
+
     if (this.y > that.y) {
       return 1;
     } else if (this.y < that.y) {
       return -1;
-    }
-
-    if (this.x > that.x) {
+    } else if (this.x > that.x) {
       return 1;
     } else if (this.x < that.x) {
       return -1;
+    } else {
+      return 0;
     }
-
-    return 0;
   }
 
   /**
@@ -102,8 +105,17 @@ public class Point implements Comparable<Point> {
    * @return the Comparator that defines this ordering on points
    */
   public Comparator<Point> slopeOrder() {
-    /* YOUR CODE HERE */
-    return null;
+
+    return new Comparator<Point>() {
+      public int compare(Point p1, Point p2) {
+        if (p1 == null || p2 == null) {
+          throw new IllegalArgumentException();
+        }
+        double s1 = slopeTo(p1);
+        double s2 = slopeTo(p2);
+        return s1 > s2 ? 1 : (s1 < s2 ? -1 : 0);
+      }
+    };
   }
 
   /**
@@ -123,19 +135,27 @@ public class Point implements Comparable<Point> {
     In in = new In(args[0]);
     int n = in.readInt();
     Point[] points = new Point[n];
+    Comparator<Point> slopeOrder = null;
     for (int i = 0; i < n; i++) {
       int x = in.readInt();
       int y = in.readInt();
-      points[i] = new Point(x, y);
-    }
+      Point p = new Point(x, y);
+      points[i] = p;
 
-    // draw the points
-    StdDraw.enableDoubleBuffering();
-    StdDraw.setXscale(0, 32768);
-    StdDraw.setYscale(0, 32768);
-    for (Point p : points) {
-      p.draw();
+      StdOut.print(p);
+      if (i == 0) {
+        slopeOrder = p.slopeOrder();
+      } else {
+        StdOut.print("\t");
+        StdOut.print(p.compareTo(points[0]));
+        StdOut.print("\t");
+        if (i > 1) {
+          StdOut.print(slopeOrder.compare(points[i - 1], p));
+        }
+        StdOut.print("\t");
+        StdOut.print(points[0].slopeTo(p));
+      }
+      StdOut.println();
     }
-    StdDraw.show();
   }
 }
