@@ -16,23 +16,27 @@ class FastCollinearPointsTest {
 
   boolean includingLargeData;
   private MergeSort<Point> mergeSort;
+  private MergeBUSort<Point> mergeBUSort;
   private QuickSort<Point> quickSort;
   private Quick3waySort<Point> quick3waySort;
   private QuickXSort<Point> quickXSort;
   private InsertionSort<Point> insertionSort;
   private InsertionXSort<Point> insertionXSort;
   private SelectionSort<Point> selectionSort;
+  private ShellSort<Point> shellSort;
 
   @BeforeEach
   void setUp() {
     includingLargeData = true;
     mergeSort = new MergeSort<>();
+    mergeBUSort = new MergeBUSort<>();
     quickSort = new QuickSort<>();
     quick3waySort = new Quick3waySort<>();
     quickXSort = new QuickXSort<>();
     insertionSort = new InsertionSort<>();
     insertionXSort = new InsertionXSort<>();
     selectionSort = new SelectionSort<>();
+    shellSort = new ShellSort<>();
   }
 
   @AfterEach
@@ -104,6 +108,11 @@ class FastCollinearPointsTest {
   }
 
   @Test
+  void testMergeBUSort() {
+    testSortInterface(mergeBUSort);
+  }
+
+  @Test
   void testQuickSort() {
     testSortInterface(quickSort);
   }
@@ -134,5 +143,11 @@ class FastCollinearPointsTest {
   void testSelectionSort() {
     includingLargeData = false;
     testSortInterface(selectionSort);
+  }
+
+  @Test
+  void testShellSort() {
+    includingLargeData = false;
+    testSortInterface(shellSort);
   }
 }

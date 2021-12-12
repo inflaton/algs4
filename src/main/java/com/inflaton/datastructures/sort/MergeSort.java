@@ -2,7 +2,7 @@ package com.inflaton.datastructures.sort;
 
 public class MergeSort<T extends Comparable<T>> extends AbstractSort<T> {
 
-  private T[] auxArray;
+  protected T[] auxArray;
 
   public void preSort(T[] a) {
     if (auxArray == null || auxArray.length != a.length) auxArray = (T[]) new Comparable[a.length];
@@ -14,7 +14,7 @@ public class MergeSort<T extends Comparable<T>> extends AbstractSort<T> {
   }
 
   // stably merge a[lo .. mid] with a[mid+1 ..hi] using aux[lo .. hi]
-  private void merge(T[] a, T[] aux, int lo, int mid, int hi) {
+  protected void merge(T[] a, T[] aux, int lo, int mid, int hi) {
     // precondition: a[lo .. mid] and a[mid+1 .. hi] are sorted subarrays
     assert isSorted(a, lo, mid);
     assert isSorted(a, mid + 1, hi);
@@ -36,7 +36,7 @@ public class MergeSort<T extends Comparable<T>> extends AbstractSort<T> {
   }
 
   // mergesort a[lo..hi] using auxiliary array aux[lo..hi]
-  private void sort(T[] a, T[] aux, int lo, int hi) {
+  protected void sort(T[] a, T[] aux, int lo, int hi) {
     if (hi <= lo) return;
     int mid = lo + (hi - lo) / 2;
     sort(a, aux, lo, mid);
