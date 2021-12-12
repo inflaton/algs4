@@ -19,7 +19,7 @@ public class QuickSort<T extends Comparable> implements SortInterface<T> {
   }
 
   // quicksort the subarray from a[lo] to a[hi]
-  private void sort(T[] a, int lo, int hi) {
+  protected void sort(T[] a, int lo, int hi) {
     if (hi <= lo) return;
     int j = partition(a, lo, hi);
     sort(a, lo, j - 1);
@@ -86,18 +86,21 @@ public class QuickSort<T extends Comparable> implements SortInterface<T> {
   /***************************************************************************
    *  Helper sorting functions.
    ***************************************************************************/
+  protected int compare(T v, T w) {
+    if (v == w) return 0; // optimization when reference equals
+    if (comparator == null) {
+      return v.compareTo(w);
+    }
+    return comparator.compare(v, w);
+  }
 
   // is v < w ?
-  private boolean less(T v, T w) {
-    if (v == w) return false; // optimization when reference equals
-    if (comparator == null) {
-      return v.compareTo(w) < 0;
-    }
-    return comparator.compare(v, w) < 0;
+  protected boolean less(T v, T w) {
+    return compare(v, w) < 0;
   }
 
   // exchange a[i] and a[j]
-  private void exch(Object[] a, int i, int j) {
+  protected void exch(Object[] a, int i, int j) {
     Object swap = a[i];
     a[i] = a[j];
     a[j] = swap;
@@ -110,7 +113,7 @@ public class QuickSort<T extends Comparable> implements SortInterface<T> {
     return isSorted(a, 0, a.length - 1);
   }
 
-  private boolean isSorted(T[] a, int lo, int hi) {
+  protected boolean isSorted(T[] a, int lo, int hi) {
     for (int i = lo + 1; i <= hi; i++) if (less(a[i], a[i - 1])) return false;
     return true;
   }
