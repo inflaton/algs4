@@ -1,6 +1,7 @@
 package com.inflaton.datastructures.sort;
 
 public class QuickXSort<T extends Comparable<T>> extends QuickSort<T> {
+
   // cutoff to insertion sort, must be >= 1
   private static final int INSERTION_SORT_CUTOFF = 8;
 

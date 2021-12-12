@@ -7,6 +7,7 @@ import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import java.util.Arrays;
 
@@ -19,6 +20,8 @@ class FastCollinearPointsTest {
   private Quick3waySort<Point> quick3waySort;
   private QuickXSort<Point> quickXSort;
   private InsertionSort<Point> insertionSort;
+  private InsertionXSort<Point> insertionXSort;
+  private SelectionSort<Point> selectionSort;
 
   @BeforeEach
   void setUp() {
@@ -27,6 +30,8 @@ class FastCollinearPointsTest {
     quick3waySort = new Quick3waySort<>();
     quickXSort = new QuickXSort<>();
     insertionSort = new InsertionSort<>();
+    insertionXSort = new InsertionXSort<>();
+    selectionSort = new SelectionSort<>();
   }
 
   @AfterEach
@@ -61,7 +66,7 @@ class FastCollinearPointsTest {
   void testSortInterface(SortInterface<Point> sortInterface) {
     FastCollinearPoints.setSortInterface(sortInterface);
     FastCollinearPoints collinear = runTestCase("rs1423.txt");
-    //    assertEquals(443, collinear.numberOfSegments());
+    assertEquals(443, collinear.numberOfSegments());
 
     collinear = runTestCase("equidistant.txt");
     assertEquals(4, collinear.numberOfSegments());
@@ -72,47 +77,61 @@ class FastCollinearPointsTest {
     collinear = runTestCase("input1000.txt");
     assertEquals(0, collinear.numberOfSegments());
 
-    //    collinear = runTestCase("mystery10089.txt");
-    //    assertEquals(34, collinear.numberOfSegments());
-    //
-    //    collinear = runTestCase("input10000.txt");
-    //    assertEquals(35, collinear.numberOfSegments());
+    if ("true".equals(System.getenv("includingLargeData"))) {
+      collinear = runTestCase("mystery10089.txt");
+      assertEquals(34, collinear.numberOfSegments());
+
+      collinear = runTestCase("input10000.txt");
+      assertEquals(35, collinear.numberOfSegments());
+    }
   }
 
   @Test
-  void useJavaArraysSort() {
+  void testJavaArraysSort() {
     testSortInterface(null);
   }
 
   @Test
-  void useJavaArraysParallelSort() {
+  void testJavaArraysParallelSort() {
     SortInterface<Point> parallelSort = Arrays::parallelSort;
-
     testSortInterface(parallelSort);
   }
 
   @Test
-  void useMergeSort() {
+  void testMergeSort() {
     testSortInterface(mergeSort);
   }
 
   @Test
-  void useQuickSort() {
+  void testQuickSort() {
     testSortInterface(quickSort);
   }
 
   @Test
-  void useQuick3waySort() {
+  void testQuick3waySort() {
     testSortInterface(quick3waySort);
   }
 
   @Test
-  void useQuickXSort() {
+  void testQuickXSort() {
     testSortInterface(quickXSort);
   }
 
   @Test
-  void useInsertionSort() {
+  @ClearEnvironmentVariable(key = "includingLargeData")
+  void testInsertionSort() {
     testSortInterface(insertionSort);
+  }
+
+  @Test
+  @ClearEnvironmentVariable(key = "includingLargeData")
+  void testInsertionXSort() {
+    testSortInterface(insertionXSort);
+  }
+
+  @Test
+  @ClearEnvironmentVariable(key = "includingLargeData")
+  void testSelectionSort() {
+    testSortInterface(selectionSort);
   }
 }

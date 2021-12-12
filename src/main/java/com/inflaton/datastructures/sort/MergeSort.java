@@ -1,6 +1,7 @@
 package com.inflaton.datastructures.sort;
 
 public class MergeSort<T extends Comparable<T>> extends AbstractSort<T> {
+
   private T[] auxArray;
 
   public void preSort(T[] a) {
