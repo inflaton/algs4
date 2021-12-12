@@ -100,19 +100,16 @@ class FastCollinearPointsTest {
 
   @Test
   void testMergeSort() {
-    includingLargeData = false;
     testSortInterface(mergeSort);
   }
 
   @Test
   void testQuickSort() {
-    includingLargeData = false;
     testSortInterface(quickSort);
   }
 
   @Test
   void testQuick3waySort() {
-    includingLargeData = false;
     testSortInterface(quick3waySort);
   }
 
@@ -123,16 +120,19 @@ class FastCollinearPointsTest {
 
   @Test
   void testInsertionSort() {
+    includingLargeData = false;
     testSortInterface(insertionSort);
   }
 
   @Test
   void testInsertionXSort() {
+    includingLargeData = false;
     testSortInterface(insertionXSort);
   }
 
   @Test
   void testSelectionSort() {
+    includingLargeData = false;
     testSortInterface(selectionSort);
   }
 }
