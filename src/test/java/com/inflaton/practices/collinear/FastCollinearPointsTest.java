@@ -78,7 +78,7 @@ class FastCollinearPointsTest {
     collinear = runTestCase("input1000.txt");
     assertEquals(0, collinear.numberOfSegments());
 
-    if ("true".equals(System.getenv("includingLargeData"))) {
+    if (includingLargeData && "true".equals(System.getenv("includingLargeData"))) {
       collinear = runTestCase("mystery10089.txt");
       assertEquals(34, collinear.numberOfSegments());
 
