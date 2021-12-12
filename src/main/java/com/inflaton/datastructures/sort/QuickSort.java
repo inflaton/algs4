@@ -1,6 +1,10 @@
 package com.inflaton.datastructures.sort;
 
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
+
+import java.util.Comparator;
 
 public class QuickSort<T extends Comparable<T>> extends AbstractSort<T> {
 
@@ -63,10 +67,17 @@ public class QuickSort<T extends Comparable<T>> extends AbstractSort<T> {
    * @throws IllegalArgumentException unless {@code 0 <= k < a.length}
    */
   public T select(T[] a, int k) {
+    return select(a, k, null);
+  }
+
+  public T select(T[] a, int k, Comparator<? super T> c) {
     if (k < 0 || k >= a.length) {
       throw new IllegalArgumentException("index is not between 0 and " + a.length + ": " + k);
     }
+
+    setComparator(c);
     StdRandom.shuffle(a);
+
     int lo = 0, hi = a.length - 1;
     while (hi > lo) {
       int i = partition(a, lo, hi);
@@ -75,5 +86,34 @@ public class QuickSort<T extends Comparable<T>> extends AbstractSort<T> {
       else return a[i];
     }
     return a[lo];
+  }
+
+  /**
+   * Reads in a sequence of strings from standard input; quicksorts them; and prints them to
+   * standard output in ascending order. Shuffles the array and then prints the strings again to
+   * standard output, but this time, using the select method.
+   *
+   * @param args the command-line arguments
+   */
+  public static void main(String[] args) {
+    QuickSort<String> quickSort = new QuickSort<>();
+
+    String[] a = StdIn.readAllStrings();
+    quickSort.sort(a);
+
+    for (int i = 0; i < a.length; i++) {
+      StdOut.println(a[i]);
+    }
+    assert quickSort.isSorted(a);
+
+    // shuffle
+    StdRandom.shuffle(a);
+
+    // display results again using select
+    StdOut.println();
+    for (int i = 0; i < a.length; i++) {
+      String ith = (String) quickSort.select(a, i);
+      StdOut.println(ith);
+    }
   }
 }
