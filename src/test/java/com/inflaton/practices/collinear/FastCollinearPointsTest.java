@@ -7,7 +7,6 @@ import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import java.util.Arrays;
 
@@ -15,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FastCollinearPointsTest {
 
+  boolean includingLargeData;
   private MergeSort<Point> mergeSort;
   private QuickSort<Point> quickSort;
   private Quick3waySort<Point> quick3waySort;
@@ -25,6 +25,7 @@ class FastCollinearPointsTest {
 
   @BeforeEach
   void setUp() {
+    includingLargeData = true;
     mergeSort = new MergeSort<>();
     quickSort = new QuickSort<>();
     quick3waySort = new Quick3waySort<>();
@@ -99,16 +100,19 @@ class FastCollinearPointsTest {
 
   @Test
   void testMergeSort() {
+    includingLargeData = false;
     testSortInterface(mergeSort);
   }
 
   @Test
   void testQuickSort() {
+    includingLargeData = false;
     testSortInterface(quickSort);
   }
 
   @Test
   void testQuick3waySort() {
+    includingLargeData = false;
     testSortInterface(quick3waySort);
   }
 
@@ -118,19 +122,16 @@ class FastCollinearPointsTest {
   }
 
   @Test
-  @ClearEnvironmentVariable(key = "includingLargeData")
   void testInsertionSort() {
     testSortInterface(insertionSort);
   }
 
   @Test
-  @ClearEnvironmentVariable(key = "includingLargeData")
   void testInsertionXSort() {
     testSortInterface(insertionXSort);
   }
 
   @Test
-  @ClearEnvironmentVariable(key = "includingLargeData")
   void testSelectionSort() {
     testSortInterface(selectionSort);
   }
