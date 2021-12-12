@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdRandom;
 import java.util.Comparator;
 
 public class QuickSort<T extends Comparable> implements SortInterface<T> {
-  private Comparator<? super T> comparator;
+  protected Comparator<? super T> comparator;
 
   public void sort(T[] a, Comparator<? super T> c) {
     this.comparator = c;
@@ -109,7 +109,7 @@ public class QuickSort<T extends Comparable> implements SortInterface<T> {
   /***************************************************************************
    *  Check if array is sorted - useful for debugging.
    ***************************************************************************/
-  private boolean isSorted(T[] a) {
+  protected boolean isSorted(T[] a) {
     return isSorted(a, 0, a.length - 1);
   }
 

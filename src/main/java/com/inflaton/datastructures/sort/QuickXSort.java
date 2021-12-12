@@ -1,8 +1,16 @@
 package com.inflaton.datastructures.sort;
 
+import java.util.Comparator;
+
 public class QuickXSort<T extends Comparable> extends QuickSort<T> {
   // cutoff to insertion sort, must be >= 1
   private static final int INSERTION_SORT_CUTOFF = 8;
+
+  public void sort(T[] a, Comparator<? super T> c) {
+    this.comparator = c;
+    sort(a, 0, a.length - 1);
+    assert isSorted(a);
+  }
 
   // quicksort the subarray from a[lo] to a[hi]
   protected void sort(T[] a, int lo, int hi) {
