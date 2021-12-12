@@ -18,6 +18,7 @@ class FastCollinearPointsTest {
   private QuickSort<Point> quickSort;
   private Quick3waySort<Point> quick3waySort;
   private QuickXSort<Point> quickXSort;
+  private InsertionSort<Point> insertionSort;
 
   @BeforeEach
   void setUp() {
@@ -25,6 +26,7 @@ class FastCollinearPointsTest {
     quickSort = new QuickSort<>();
     quick3waySort = new Quick3waySort<>();
     quickXSort = new QuickXSort<>();
+    insertionSort = new InsertionSort<>();
   }
 
   @AfterEach
@@ -84,10 +86,7 @@ class FastCollinearPointsTest {
 
   @Test
   void useJavaArraysParallelSort() {
-    SortInterface<Point> parallelSort =
-        (a, c) -> {
-          Arrays.parallelSort(a, c);
-        };
+    SortInterface<Point> parallelSort = Arrays::parallelSort;
 
     testSortInterface(parallelSort);
   }
@@ -110,5 +109,10 @@ class FastCollinearPointsTest {
   @Test
   void useQuickXSort() {
     testSortInterface(quickXSort);
+  }
+
+  @Test
+  void useInsertionSort() {
+    testSortInterface(insertionSort);
   }
 }

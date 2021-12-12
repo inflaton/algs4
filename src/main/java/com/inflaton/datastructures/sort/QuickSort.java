@@ -2,24 +2,18 @@ package com.inflaton.datastructures.sort;
 
 import edu.princeton.cs.algs4.StdRandom;
 
-import java.util.Comparator;
+public class QuickSort<T extends Comparable<T>> extends AbstractSort<T> {
 
-public class QuickSort<T extends Comparable> implements SortInterface<T> {
-  protected Comparator<? super T> comparator;
-
-  public void sort(T[] a, Comparator<? super T> c) {
-    this.comparator = c;
+  public void preSort(T[] a) {
     StdRandom.shuffle(a);
-    sort(a, 0, a.length - 1);
-    assert isSorted(a);
   }
 
-  public void sort(T[] a) {
-    sort(a, null);
+  public void doSort(T[] a) {
+    sort(a, 0, a.length - 1);
   }
 
   // quicksort the subarray from a[lo] to a[hi]
-  protected void sort(T[] a, int lo, int hi) {
+  public void sort(T[] a, int lo, int hi) {
     if (hi <= lo) return;
     int j = partition(a, lo, hi);
     sort(a, lo, j - 1);
@@ -81,40 +75,5 @@ public class QuickSort<T extends Comparable> implements SortInterface<T> {
       else return a[i];
     }
     return a[lo];
-  }
-
-  /***************************************************************************
-   *  Helper sorting functions.
-   ***************************************************************************/
-  protected int compare(T v, T w) {
-    if (v == w) return 0; // optimization when reference equals
-    if (comparator == null) {
-      return v.compareTo(w);
-    }
-    return comparator.compare(v, w);
-  }
-
-  // is v < w ?
-  protected boolean less(T v, T w) {
-    return compare(v, w) < 0;
-  }
-
-  // exchange a[i] and a[j]
-  protected void exch(Object[] a, int i, int j) {
-    Object swap = a[i];
-    a[i] = a[j];
-    a[j] = swap;
-  }
-
-  /***************************************************************************
-   *  Check if array is sorted - useful for debugging.
-   ***************************************************************************/
-  protected boolean isSorted(T[] a) {
-    return isSorted(a, 0, a.length - 1);
-  }
-
-  protected boolean isSorted(T[] a, int lo, int hi) {
-    for (int i = lo + 1; i <= hi; i++) if (less(a[i], a[i - 1])) return false;
-    return true;
   }
 }

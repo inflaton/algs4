@@ -1,8 +1,9 @@
 package com.inflaton.datastructures.sort;
 
-public class Quick3waySort<T extends Comparable> extends QuickSort<T> {
+public class Quick3waySort<T extends Comparable<T>> extends QuickSort<T> {
+
   // quicksort the subarray a[lo .. hi] using 3-way partitioning
-  protected void sort(T[] a, int lo, int hi) {
+  public void sort(T[] a, int lo, int hi) {
     if (hi <= lo) return;
     int lt = lo, gt = hi;
     T v = a[lo];
