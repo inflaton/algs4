@@ -24,6 +24,7 @@ class FastCollinearPointsTest {
   private InsertionXSort<Point> insertionXSort;
   private SelectionSort<Point> selectionSort;
   private ShellSort<Point> shellSort;
+  private HeapSort<Point> heapSort;
 
   @BeforeEach
   void setUp() {
@@ -37,6 +38,7 @@ class FastCollinearPointsTest {
     insertionXSort = new InsertionXSort<>();
     selectionSort = new SelectionSort<>();
     shellSort = new ShellSort<>();
+    heapSort = new HeapSort<>();
   }
 
   @AfterEach
@@ -125,6 +127,11 @@ class FastCollinearPointsTest {
   @Test
   void testQuickXSort() {
     testSortInterface(quickXSort);
+  }
+
+  @Test
+  void testHeapSort() {
+    testSortInterface(heapSort);
   }
 
   @Test
