@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class BruteCollinearPoints {
-  private final ArrayList<LineSegment> segmentArrayList;
+  private final LineSegment[] segments;
 
   // finds all line segments containing 4 points
   public BruteCollinearPoints(Point[] points) {
@@ -22,23 +22,30 @@ public class BruteCollinearPoints {
     }
 
     final int n = points.length;
+    Point[] buffer = new Point[n];
+    System.arraycopy(points, 0, buffer, 0, n);
     if (n > 1) {
-      Arrays.sort(points);
+      Arrays.sort(buffer);
       for (int i = 0; i < n - 1; i++) {
-        if (points[i].compareTo(points[i + 1]) == 0) {
+        if (buffer[i].compareTo(buffer[i + 1]) == 0) {
           throw new IllegalArgumentException();
         }
       }
     }
 
-    segmentArrayList = new ArrayList<>();
-    findAllLineSegments(points);
+    ArrayList<Point[]> segmentPointsArrayList = findAllLineSegments(buffer);
+    segments = new LineSegment[segmentPointsArrayList.size()];
+    for (int i = 0; i < segmentPointsArrayList.size(); i++) {
+      Point[] segPoints = segmentPointsArrayList.get(i);
+      segments[i] = new LineSegment(segPoints[0], segPoints[segPoints.length - 1]);
+    }
   }
 
-  private void findAllLineSegments(Point[] points) {
+  private ArrayList<Point[]> findAllLineSegments(Point[] points) {
+    ArrayList<Point[]> segmentPointsArrayList = new ArrayList<>();
     final int n = points.length;
     if (n < 4) {
-      return;
+      return segmentPointsArrayList;
     }
 
     for (int p = 0; p < n; p++) {
@@ -51,44 +58,46 @@ public class BruteCollinearPoints {
             if (slopeOrder.compare(points[q], points[r]) == 0
                 && slopeOrder.compare(points[r], points[s]) == 0) {
               Point[] segPoints = {points[p], points[q], points[r], points[s]};
-              addUniqueLineSegment(segPoints);
+              addUniqueLineSegment(segPoints, segmentPointsArrayList);
             }
           }
         }
       }
     }
+
+    return segmentPointsArrayList;
   }
 
-  private void addUniqueLineSegment(Point[] segPoints) {
+  private void addUniqueLineSegment(Point[] segPoints, ArrayList<Point[]> segmentPointsArrayList) {
     Arrays.sort(segPoints);
-    LineSegment segment = new LineSegment(segPoints[0], segPoints[segPoints.length - 1]);
-    String str = segment.toString();
     boolean found = false;
-    for (LineSegment ls : segmentArrayList) {
-      if (ls.toString().equals(str)) {
+    for (Point[] pa : segmentPointsArrayList) {
+      if (pa.length == segPoints.length
+          && segPoints[0] == pa[0]
+          && segPoints[segPoints.length - 1] == pa[segPoints.length - 1]) {
         found = true;
         break;
       }
     }
+
     if (!found) {
-      segmentArrayList.add(segment);
+      segmentPointsArrayList.add(segPoints);
     }
   }
 
   // the number of line segments
   public int numberOfSegments() {
-    return segmentArrayList.size();
+    return segments.length;
   }
 
   // the line segments
   public LineSegment[] segments() {
-    LineSegment[] segments = new LineSegment[segmentArrayList.size()];
-    segmentArrayList.toArray(segments);
-    return segments;
+    return Arrays.copyOf(segments, segments.length);
   }
 
   public static void main(String[] args) {
     // read the n points from a file
+
     In in = new In(args[0]);
     int n = in.readInt();
     Point[] points = new Point[n];
