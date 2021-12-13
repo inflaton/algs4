@@ -1,3 +1,6 @@
+package com.inflaton.practices.collinear;
+
+import com.inflaton.datastructures.sort.SortInterface;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -7,14 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class FastCollinearPoints {
-
+public class FastXCollinearPoints {
   // finds all line segments containing 4 or more points
   private final LineSegment[] segments;
   private final Point[] sortedPoints;
 
   // finds all line segments containing 4 points
-  public FastCollinearPoints(Point[] points) {
+  public FastXCollinearPoints(Point[] points) {
     if (points == null) {
       throw new IllegalArgumentException();
     }
@@ -27,7 +29,7 @@ public class FastCollinearPoints {
     final int n = points.length;
     sortedPoints = Arrays.copyOf(points, n);
     if (n > 1) {
-      Arrays.sort(sortedPoints);
+      sort(sortedPoints);
       for (int i = 0; i < n - 1; i++) {
         if (sortedPoints[i].compareTo(sortedPoints[i + 1]) == 0) {
           throw new IllegalArgumentException();
@@ -50,7 +52,7 @@ public class FastCollinearPoints {
       Point pp = sortedPoints[p];
       Comparator<Point> slopeOrder = pp.slopeOrder();
       Point[] points = Arrays.copyOf(sortedPoints, n);
-      Arrays.sort(points, slopeOrder);
+      sort(points, slopeOrder);
 
       int startIndex = 0;
       int endIndex = 1;
@@ -82,6 +84,24 @@ public class FastCollinearPoints {
   // the line segments
   public LineSegment[] segments() {
     return Arrays.copyOf(segments, segments.length);
+  }
+
+  private static SortInterface sortInterface;
+
+  public static void setSortInterface(SortInterface sortInterface) {
+    FastXCollinearPoints.sortInterface = sortInterface;
+  }
+
+  private void sort(Point[] points) {
+    sort(points, null);
+  }
+
+  private void sort(Point[] points, Comparator<Point> comparator) {
+    if (sortInterface == null) {
+      Arrays.sort(points, comparator);
+    } else {
+      sortInterface.sort(points, comparator);
+    }
   }
 
   public static void main(String[] args) {

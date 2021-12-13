@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FastCollinearPointsTest {
+class FastXCollinearPointsTest {
 
   boolean includingLargeData;
   private MergeSort<Point> mergeSort;
@@ -58,10 +58,10 @@ class FastCollinearPointsTest {
     return points;
   }
 
-  FastCollinearPoints runTestCase(String filename) {
+  FastXCollinearPoints runTestCase(String filename) {
     Point[] points = loadFile(filename);
     Stopwatch stopwatch = new Stopwatch();
-    FastCollinearPoints collinear = new FastCollinearPoints(points);
+    FastXCollinearPoints collinear = new FastXCollinearPoints(points);
     double elapsedTime = stopwatch.elapsedTime();
     int numberOfSegments = collinear.numberOfSegments();
     StdOut.println("numberOfSegments: " + numberOfSegments);
@@ -71,8 +71,8 @@ class FastCollinearPointsTest {
   }
 
   void testSortInterface(SortInterface<Point> sortInterface) {
-    FastCollinearPoints.setSortInterface(sortInterface);
-    FastCollinearPoints collinear = runTestCase("input1000.txt");
+    FastXCollinearPoints.setSortInterface(sortInterface);
+    FastXCollinearPoints collinear = runTestCase("input1000.txt");
     assertEquals(0, collinear.numberOfSegments());
 
     collinear = runTestCase("equidistant.txt");
@@ -118,26 +118,6 @@ class FastCollinearPointsTest {
   }
 
   @Test
-  void testQuickSort() {
-    testSortInterface(quickSort);
-  }
-
-  @Test
-  void testQuick3waySort() {
-    testSortInterface(quick3waySort);
-  }
-
-  @Test
-  void testQuickXSort() {
-    testSortInterface(quickXSort);
-  }
-
-  @Test
-  void testHeapSort() {
-    testSortInterface(heapSort);
-  }
-
-  @Test
   void testInsertionSort() {
     includingLargeData = false;
     testSortInterface(insertionSort);
@@ -147,17 +127,5 @@ class FastCollinearPointsTest {
   void testInsertionXSort() {
     includingLargeData = false;
     testSortInterface(insertionXSort);
-  }
-
-  @Test
-  void testSelectionSort() {
-    includingLargeData = false;
-    testSortInterface(selectionSort);
-  }
-
-  @Test
-  void testShellSort() {
-    includingLargeData = false;
-    testSortInterface(shellSort);
   }
 }
