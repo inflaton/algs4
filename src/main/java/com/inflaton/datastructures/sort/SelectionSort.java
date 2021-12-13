@@ -9,7 +9,7 @@ public class SelectionSort<T extends Comparable<T>> extends AbstractSort<T> {
       for (int j = i + 1; j < n; j++) {
         if (less(a[j], a[min])) min = j;
       }
-      exch(a, i, min);
+      swap(a, i, min);
       assert isSorted(a, 0, i);
     }
   }

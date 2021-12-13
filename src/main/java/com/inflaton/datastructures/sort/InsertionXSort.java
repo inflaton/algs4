@@ -9,7 +9,7 @@ public class InsertionXSort<T extends Comparable<T>> extends AbstractSort<T> {
     int exchanges = 0;
     for (int i = n - 1; i > 0; i--) {
       if (less(a[i], a[i - 1])) {
-        exch(a, i, i - 1);
+        swap(a, i, i - 1);
         exchanges++;
       }
     }

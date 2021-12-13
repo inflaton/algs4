@@ -46,11 +46,11 @@ public class QuickSort<T extends Comparable<T>> extends AbstractSort<T> {
       // check if pointers cross
       if (i >= j) break;
 
-      exch(a, i, j);
+      swap(a, i, j);
     }
 
     // put partitioning item v at a[j]
-    exch(a, lo, j);
+    swap(a, lo, j);
 
     // now, a[lo .. j-1] <= a[j] <= a[j+1 .. hi]
     return j;

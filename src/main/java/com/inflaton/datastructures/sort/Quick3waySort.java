@@ -10,8 +10,8 @@ public class Quick3waySort<T extends Comparable<T>> extends QuickSort<T> {
     int i = lo + 1;
     while (i <= gt) {
       int cmp = compare(a[i], v);
-      if (cmp < 0) exch(a, lt++, i++);
-      else if (cmp > 0) exch(a, i, gt--);
+      if (cmp < 0) swap(a, lt++, i++);
+      else if (cmp > 0) swap(a, i, gt--);
       else i++;
     }
 

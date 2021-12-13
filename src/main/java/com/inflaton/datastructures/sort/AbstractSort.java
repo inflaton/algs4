@@ -44,10 +44,10 @@ public abstract class AbstractSort<T extends Comparable<T>> implements SortInter
   }
 
   // exchange a[i] and a[j]
-  protected void exch(Object[] a, int i, int j) {
-    Object swap = a[i];
+  protected void swap(Object[] a, int i, int j) {
+    Object o = a[i];
     a[i] = a[j];
-    a[j] = swap;
+    a[j] = o;
   }
 
   /***************************************************************************

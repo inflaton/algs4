@@ -11,7 +11,7 @@ public class HeapSort<T extends Comparable<T>> extends AbstractSort<T> {
     // sortdown phase
     int k = n;
     while (k > 1) {
-      exch(pq, 1, k--);
+      swap(pq, 1, k--);
       sink(pq, 1, k);
     }
   }
@@ -21,16 +21,20 @@ public class HeapSort<T extends Comparable<T>> extends AbstractSort<T> {
       int j = 2 * k;
       if (j < n && less(pq, j, j + 1)) j++;
       if (!less(pq, k, j)) break;
-      exch(pq, k, j);
+      swap(pq, k, j);
       k = j;
     }
   }
 
+  /***************************************************************************
+   * Helper functions for comparisons and swaps.
+   * Indices are "off-by-one" to support 1-based indexing.
+   ***************************************************************************/
   private boolean less(T[] pq, int i, int j) {
     return less(pq[i - 1], pq[j - 1]);
   }
 
-  protected void exch(T[] pq, int i, int j) {
-    super.exch(pq, i - 1, j - 1);
+  protected void swap(T[] pq, int i, int j) {
+    super.swap(pq, i - 1, j - 1);
   }
 }
