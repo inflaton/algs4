@@ -70,8 +70,8 @@ class FastXCollinearPointsTest {
     return collinear;
   }
 
-  void testSortInterface(SortInterface<Point> sortInterface) {
-    FastXCollinearPoints.setSortInterface(sortInterface);
+  void testSortInterface(SortInterface<Point> sortInterface, boolean stableSort) {
+    FastXCollinearPoints.setSortInterface(sortInterface, stableSort);
     FastXCollinearPoints collinear = runTestCase("input1000.txt");
     assertEquals(0, collinear.numberOfSegments());
 
@@ -98,34 +98,66 @@ class FastXCollinearPointsTest {
 
   @Test
   void testJavaArraysSort() {
-    testSortInterface(null);
+    testSortInterface(null, true);
   }
 
   @Test
   void testJavaArraysParallelSort() {
     SortInterface<Point> parallelSort = Arrays::parallelSort;
-    testSortInterface(parallelSort);
+    testSortInterface(parallelSort, true);
   }
 
   @Test
   void testMergeSort() {
-    testSortInterface(mergeSort);
+    testSortInterface(mergeSort, true);
   }
 
   @Test
   void testMergeBUSort() {
-    testSortInterface(mergeBUSort);
+    testSortInterface(mergeBUSort, true);
+  }
+
+  @Test
+  void testQuickSort() {
+    testSortInterface(quickSort, false);
+  }
+
+  @Test
+  void testQuick3waySort() {
+    testSortInterface(quick3waySort, false);
+  }
+
+  @Test
+  void testQuickXSort() {
+    testSortInterface(quickXSort, false);
+  }
+
+  @Test
+  void testHeapSort() {
+    testSortInterface(heapSort, false);
   }
 
   @Test
   void testInsertionSort() {
     includingLargeData = false;
-    testSortInterface(insertionSort);
+    testSortInterface(insertionSort, true);
   }
 
   @Test
   void testInsertionXSort() {
     includingLargeData = false;
-    testSortInterface(insertionXSort);
+    testSortInterface(insertionXSort, true);
+  }
+
+  @Test
+  void testSelectionSort() {
+    includingLargeData = false;
+    testSortInterface(selectionSort, false);
+  }
+
+  @Test
+  void testShellSort() {
+    includingLargeData = false;
+    testSortInterface(shellSort, false);
   }
 }

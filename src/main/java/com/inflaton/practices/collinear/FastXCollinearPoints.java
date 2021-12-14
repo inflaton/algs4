@@ -54,26 +54,34 @@ public class FastXCollinearPoints {
       Point[] points = Arrays.copyOf(sortedPoints, n);
       sort(points, slopeOrder);
 
-      int startIndex = 0;
-      int endIndex = 1;
-      while (endIndex < n) {
-        if (endIndex == n - 1 || slopeOrder.compare(points[startIndex], points[endIndex]) != 0) {
-          if (endIndex == n - 1 && slopeOrder.compare(points[startIndex], points[endIndex]) == 0)
-            endIndex++;
-          int len = endIndex - startIndex;
-          if (len >= 3) {
-            if (pp.compareTo(points[startIndex]) < 0) {
-              LineSegment seg = new LineSegment(pp, points[endIndex - 1]);
-              segmentsArrayList.add(seg);
-            }
+      int start = 0;
+      int end = 1;
+      while (end < n) {
+        if (end == n - 1 || slopeOrder.compare(points[start], points[end]) != 0) {
+          if (end == n - 1 && slopeOrder.compare(points[start], points[end]) == 0) end++;
+
+          if (validateLineSegment(pp, points, start, end)) {
+            LineSegment seg = new LineSegment(pp, points[end - 1]);
+            segmentsArrayList.add(seg);
           }
-          startIndex = endIndex;
+          start = end;
         }
-        endIndex++;
+        end++;
       }
     }
 
     return segmentsArrayList;
+  }
+
+  private boolean validateLineSegment(Point pp, Point[] points, int start, int end) {
+    int len = end - start;
+    if (len >= 3) {
+      if (!stableSort) {
+        Arrays.sort(points, start, end);
+      }
+      return pp.compareTo(points[start]) < 0;
+    }
+    return false;
   }
 
   // the number of line segments
@@ -88,8 +96,11 @@ public class FastXCollinearPoints {
 
   private static SortInterface sortInterface;
 
-  public static void setSortInterface(SortInterface sortInterface) {
+  private static boolean stableSort = true;
+
+  public static void setSortInterface(SortInterface sortInterface, boolean stableSort) {
     FastXCollinearPoints.sortInterface = sortInterface;
+    FastXCollinearPoints.stableSort = stableSort;
   }
 
   private void sort(Point[] points) {

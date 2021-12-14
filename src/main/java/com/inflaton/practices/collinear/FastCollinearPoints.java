@@ -63,37 +63,28 @@ public class FastCollinearPoints {
 
       sort(buffer, slopeOrder);
 
-      int startIndex = 0;
-      int endIndex = 1;
-      while (endIndex < n) {
-        if (endIndex == n - 1 || slopeOrder.compare(buffer[startIndex], buffer[endIndex]) != 0) {
-          int len = endIndex - startIndex;
+      int start = 0;
+      int end = 1;
+      while (end < n) {
+        if (end == n - 1 || slopeOrder.compare(buffer[start], buffer[end]) != 0) {
+          int len = end - start;
           if (len >= 3) {
             Point[] segPoints = new Point[len + 1];
             segPoints[0] = points[p];
-            System.arraycopy(buffer, startIndex, segPoints, 1, len);
+            System.arraycopy(buffer, start, segPoints, 1, len);
             addUniqueLineSegment(segPoints);
           }
-          startIndex = endIndex;
+          start = end;
         }
-        endIndex++;
+        end++;
       }
     }
   }
 
   private void addUniqueLineSegment(Point[] segPoints) {
+    Point pp = segPoints[0];
     sort(segPoints);
-    boolean found = false;
-    for (Point[] pa : segmentPointsArrayList) {
-      if (pa.length == segPoints.length
-          && segPoints[0].compareTo(pa[0]) == 0
-          && segPoints[segPoints.length - 1].compareTo(pa[segPoints.length - 1]) == 0) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
+    if (pp == segPoints[0]) {
       segmentPointsArrayList.add(segPoints);
     }
   }
