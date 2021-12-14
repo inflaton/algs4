@@ -23,8 +23,9 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.priorityqueue;
+package com.inflaton.datastructures.priorityqueue.client;
 
+import com.inflaton.datastructures.priorityqueue.IndexMinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
