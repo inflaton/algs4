@@ -11,7 +11,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class FastCollinearPoints {
-  private final ArrayList<Point[]> segmentPointsArrayList;
+  // finds all line segments containing 4 or more points
+  private final LineSegment[] segments;
 
   static SortInterface sortInterface;
 
@@ -31,6 +32,7 @@ public class FastCollinearPoints {
     }
 
     final int n = points.length;
+    points = Arrays.copyOf(points, n);
     if (n > 1) {
       sort(points);
       for (int i = 0; i < n - 1; i++) {
@@ -40,14 +42,16 @@ public class FastCollinearPoints {
       }
     }
 
-    segmentPointsArrayList = new ArrayList<>();
-    findAllLineSegments(points);
+    ArrayList<LineSegment> segmentsArrayList = findAllLineSegments(points);
+    segments = new LineSegment[segmentsArrayList.size()];
+    segmentsArrayList.toArray(segments);
   }
 
-  private void findAllLineSegments(Point[] points) {
+  private ArrayList<LineSegment> findAllLineSegments(Point[] points) {
+    ArrayList<LineSegment> segmentsArrayList = new ArrayList<>();
     final int n = points.length;
     if (n < 4) {
-      return;
+      return segmentsArrayList;
     }
 
     Point[] buffer = new Point[n - 1];
@@ -72,20 +76,23 @@ public class FastCollinearPoints {
             Point[] segPoints = new Point[len + 1];
             segPoints[0] = points[p];
             System.arraycopy(buffer, start, segPoints, 1, len);
-            addUniqueLineSegment(segPoints);
+            addUniqueLineSegment(segPoints, segmentsArrayList);
           }
           start = end;
         }
         end++;
       }
     }
+
+    return segmentsArrayList;
   }
 
-  private void addUniqueLineSegment(Point[] segPoints) {
+  private void addUniqueLineSegment(Point[] segPoints, ArrayList<LineSegment> segmentsArrayList) {
     Point pp = segPoints[0];
     sort(segPoints);
     if (pp == segPoints[0]) {
-      segmentPointsArrayList.add(segPoints);
+      LineSegment segment = new LineSegment(segPoints[0], segPoints[segPoints.length - 1]);
+      segmentsArrayList.add(segment);
     }
   }
 
@@ -103,18 +110,12 @@ public class FastCollinearPoints {
 
   // the number of line segments
   public int numberOfSegments() {
-    return segmentPointsArrayList.size();
+    return segments.length;
   }
 
   // the line segments
   public LineSegment[] segments() {
-    LineSegment[] segments = new LineSegment[segmentPointsArrayList.size()];
-    int i = 0;
-    for (Point[] segPoints : segmentPointsArrayList) {
-      segments[i] = new LineSegment(segPoints[0], segPoints[segPoints.length - 1]);
-      i++;
-    }
-    return segments;
+    return Arrays.copyOf(segments, segments.length);
   }
 
   public static void main(String[] args) {
