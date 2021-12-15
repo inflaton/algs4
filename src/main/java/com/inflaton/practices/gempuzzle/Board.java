@@ -35,6 +35,12 @@ public class Board {
     }
   }
 
+  // used in createSwap only
+  private Board(Board copyFrom) {
+    this.tiles = Arrays.copyOf(copyFrom.tiles, copyFrom.tiles.length);
+    this.n = copyFrom.n;
+  }
+
   private int get(int i, int j) {
     return tiles[i * n + j];
   }
@@ -99,7 +105,13 @@ public class Board {
 
   // is this board the goal board?
   public boolean isGoal() {
-    return hamming() == 0;
+    int i;
+    for (i = 0; i < tiles.length - 1; i++) {
+      if (tiles[i] != i + 1) {
+        return false;
+      }
+    }
+    return tiles[i] == 0;
   }
 
   // does this board equal y?
@@ -110,20 +122,11 @@ public class Board {
     return n == board.n && Arrays.equals(tiles, board.tiles);
   }
 
-  private Board createNeighbor(int row, int col, int r, int c) {
-    int[][] newTiles = new int[n][n];
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (i == row && j == col) {
-          newTiles[row][col] = get(r, c);
-        } else if (i == r && j == c) {
-          newTiles[r][c] = get(row, col);
-        } else {
-          newTiles[i][j] = get(i, j);
-        }
-      }
-    }
-    return new Board(newTiles);
+  private Board createSwap(int row, int col, int r, int c) {
+    Board b = new Board(this);
+    b.tiles[row * n + col] = get(r, c);
+    b.tiles[r * n + c] = get(row, col);
+    return b;
   }
   // all neighboring boards
   public Iterable<Board> neighbors() {
@@ -170,7 +173,7 @@ public class Board {
     }
 
     private void addNeighbor(int row, int col, int r, int c) {
-      neighbors.add(createNeighbor(row, col, r, c));
+      neighbors.add(createSwap(row, col, r, c));
     }
 
     public boolean hasNext() {
@@ -191,11 +194,17 @@ public class Board {
     }
     int row = index / n;
     int col = index % n;
-    if (col > 0) {
-      return createNeighbor(row, col, row, col - 1);
-    }
 
-    return createNeighbor(row, col, row, col + 1);
+    if (row > 0 && get(row - 1, col) != 0) {
+      return createSwap(row, col, row - 1, col);
+    }
+    if (row < n - 1 && get(row + 1, col) != 0) {
+      return createSwap(row, col, row + 1, col);
+    }
+    if (col > 0 && get(row, col - 1) != 0) {
+      return createSwap(row, col, row, col - 1);
+    }
+    return createSwap(row, col, row, col + 1);
   }
 
   // unit testing (not graded)
