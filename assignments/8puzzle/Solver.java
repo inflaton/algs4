@@ -1,7 +1,5 @@
-package com.inflaton.practices.gempuzzle;
-
-import com.inflaton.datastructures.priorityqueue.MinPQ;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;

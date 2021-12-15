@@ -55,3 +55,20 @@ public class PuzzleChecker {
     }
   }
 }
+
+// src/test/data/gempuzzle/puzzle38.txt: 40
+
+// src/test/data/gempuzzle/puzzle3x3-32.txt: 14
+
+// src/test/data/gempuzzle/puzzle49.txt: Exception in thread "main" java.lang.OutOfMemoryError: Java
+// heap space
+//        at java.base/java.util.ArrayList.grow(ArrayList.java:239)
+//        at java.base/java.util.ArrayList.grow(ArrayList.java:244)
+//        at java.base/java.util.ArrayList.add(ArrayList.java:454)
+//        at java.base/java.util.ArrayList.add(ArrayList.java:467)
+//        at Board$NeighborIterator.addNeighbor(Board.java:177)
+//        at Board$NeighborIterator.<init>(Board.java:163)
+//        at Board$1.iterator(Board.java:136)
+//        at Solver.moveOneStep(Solver.java:87)
+//        at Solver.<init>(Solver.java:67)
+//        at PuzzleChecker.main(PuzzleChecker.java:51)
