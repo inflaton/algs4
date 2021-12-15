@@ -83,17 +83,20 @@ public class Board {
 
   // sum of Manhattan distances between tiles and goal
   public int manhattan() {
-    final int max = n * n;
     int manhattan = 0;
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         int v = get(i, j);
-        if (v == 0) {
-          v = max;
+        int row = v == 0 ? n - 1 : (v - 1) / n;
+        int col = v == 0 ? n - 1 : (v - 1) % n;
+
+        int delta = row - i;
+        if (delta < 0) {
+          delta = -delta;
         }
-        int row = (v - 1) / n;
-        int col = (v - 1) % n;
-        int delta = row + col - i - j;
+        manhattan += delta;
+
+        delta = col - j;
         if (delta < 0) {
           delta = -delta;
         }
@@ -227,6 +230,7 @@ public class Board {
     while (it.hasNext()) {
       Board neighbor = it.next();
       StdOut.println("manhattan: " + neighbor.manhattan());
+      StdOut.println("hamming: " + neighbor.hamming());
       StdOut.println(neighbor);
       assert !neighbor.equals(board);
     }
@@ -234,11 +238,13 @@ public class Board {
     Board twin = board.twin();
     StdOut.println("twin 1: ");
     StdOut.println("manhattan: " + twin.manhattan());
+    StdOut.println("hamming: " + twin.hamming());
     StdOut.println(twin);
 
     twin = board.twin();
     StdOut.println("twin 2: ");
     StdOut.println("manhattan: " + twin.manhattan());
+    StdOut.println("hamming: " + twin.hamming());
     StdOut.println(twin);
   }
 }
