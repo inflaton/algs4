@@ -12,6 +12,7 @@ public class Board {
 
   private final int n;
   private final int[] tiles;
+  private ArrayList<Board> neighbors;
 
   // create a board from an n-by-n array of tiles,
   // where tiles[row][col] = tile at (row, col)
@@ -87,8 +88,9 @@ public class Board {
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         int v = get(i, j);
-        int row = v == 0 ? n - 1 : (v - 1) / n;
-        int col = v == 0 ? n - 1 : (v - 1) % n;
+        if (v == 0) continue;
+        int row = (v - 1) / n;
+        int col = (v - 1) % n;
 
         int delta = row - i;
         if (delta < 0) {
@@ -118,10 +120,10 @@ public class Board {
   }
 
   // does this board equal y?
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Board board = (Board) o;
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Board board = (Board) obj;
     return n == board.n && Arrays.equals(tiles, board.tiles);
   }
 
@@ -131,21 +133,15 @@ public class Board {
     b.tiles[r * n + c] = get(row, col);
     return b;
   }
-  // all neighboring boards
-  public Iterable<Board> neighbors() {
-    return new Iterable<Board>() {
-      public Iterator<Board> iterator() {
-        return new NeighborIterator();
-      }
-    };
+
+  private void addNeighbor(int row, int col, int r, int c) {
+    neighbors.add(createSwap(row, col, r, c));
   }
 
-  private class NeighborIterator implements Iterator<Board> {
-    private int index;
-    private ArrayList<Board> neighbors;
-
-    public NeighborIterator() {
+  private ArrayList<Board> getNeighbors() {
+    if (neighbors == null) {
       neighbors = new ArrayList<>();
+
       int row = -1;
       int col = -1;
       for (int i = 0; i < n; i++) {
@@ -158,9 +154,7 @@ public class Board {
           }
         }
       }
-      if (row < 0) {
-        return;
-      }
+
       if (row > 0) {
         addNeighbor(row, col, row - 1, col);
       }
@@ -175,17 +169,12 @@ public class Board {
       }
     }
 
-    private void addNeighbor(int row, int col, int r, int c) {
-      neighbors.add(createSwap(row, col, r, c));
-    }
+    return neighbors;
+  }
 
-    public boolean hasNext() {
-      return index < neighbors.size();
-    }
-
-    public Board next() {
-      return neighbors.get(index++);
-    }
+  // all neighboring boards
+  public Iterable<Board> neighbors() {
+    return getNeighbors();
   }
 
   // a board that is obtained by exchanging any pair of tiles

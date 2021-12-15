@@ -1,23 +1,21 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Solver {
 
   private static class Node {
     Board board;
-    Node next, prev;
-    private final int moves, manhattan, hamming;
+    Node parent;
+    private final int moves, manhattan;
 
     public Node(Board board, int moves) {
       this.board = board;
       this.moves = moves;
       manhattan = board.manhattan();
-      hamming = board.hamming();
     }
 
     public int getPriority() {
@@ -29,49 +27,34 @@ public class Solver {
     }
   }
 
-  private Comparator<Node> nodeComparator =
-      new Comparator<Node>() {
-        public int compare(Node o1, Node o2) {
-          int c = Integer.compare(o1.getPriority(), o2.getPriority());
-          if (c == 0) {
-            c = Integer.compare(o1.moves, o2.moves);
-          }
-          if (c == 0) {
-            c = Integer.compare(o1.hamming, o2.hamming);
-          }
-          return c;
-        }
-      };
-
-  private final Node head;
-  private int moves;
+  private final Stack<Board> boardStack = new Stack<>();
 
   // find a solution to the initial board (using the A* algorithm)
   public Solver(Board initial) {
+    if (initial == null) throw new IllegalArgumentException();
+    final Comparator<Node> nodeComparator =
+        Comparator.comparingInt(Node::getPriority).thenComparingInt(o -> o.moves);
     MinPQ<Node> pq = new MinPQ<>(nodeComparator);
     MinPQ<Node> twinPQ = new MinPQ<>(nodeComparator);
 
     Node node = new Node(initial, 0);
     pq.insert(node);
-    head = node;
 
     node = new Node(initial.twin(), 0);
     twinPQ.insert(node);
 
     Node current = null;
     Node twinCurrent = null;
-    moves = -1;
 
     while (!pq.isEmpty() && !twinPQ.isEmpty()) {
-      current = moveOneStep(current, pq);
-      twinCurrent = moveOneStep(twinCurrent, twinPQ);
+      current = moveOneStep(pq);
+      twinCurrent = moveOneStep(twinPQ);
 
       if (current.isGoal()) {
-        moves = current.moves;
-        while (current != head) {
-          current.prev.next = current;
-          current = current.prev;
-        }
+        do {
+          boardStack.push(current.board);
+          current = current.parent;
+        } while (current != null);
         break;
       }
       if (twinCurrent.isGoal()) {
@@ -80,14 +63,14 @@ public class Solver {
     }
   }
 
-  private Node moveOneStep(Node current, MinPQ<Node> pq) {
-    current = pq.delMin();
-    int moves = current.moves + 1;
+  private Node moveOneStep(MinPQ<Node> pq) {
+    Node current = pq.delMin();
+    int newMoves = current.moves + 1;
 
     for (Board board : current.board.neighbors()) {
-      if (current.prev == null || !board.equals(current.prev.board)) {
-        Node node = new Node(board, moves);
-        node.prev = current;
+      if (current.parent == null || !board.equals(current.parent.board)) {
+        Node node = new Node(board, newMoves);
+        node.parent = current;
         pq.insert(node);
       }
     }
@@ -97,33 +80,12 @@ public class Solver {
 
   // is the initial board solvable? (see below)
   public boolean isSolvable() {
-    return moves >= 0;
+    return !boardStack.isEmpty();
   }
 
   // min number of moves to solve initial board; -1 if unsolvable
   public int moves() {
-    return moves;
-  }
-
-  private class BoardIterator implements Iterator<Board> {
-    private Node current;
-
-    public BoardIterator() {
-      current = head;
-    }
-
-    public boolean hasNext() {
-      return current != null;
-    }
-
-    public Board next() {
-      if (!hasNext()) {
-        throw new NoSuchElementException();
-      }
-      Board board = current.board;
-      current = current.next;
-      return board;
-    }
+    return boardStack.size() - 1;
   }
 
   // sequence of boards in a shortest solution; null if unsolvable
@@ -132,11 +94,7 @@ public class Solver {
       return null;
     }
 
-    return new Iterable<Board>() {
-      public Iterator<Board> iterator() {
-        return new BoardIterator();
-      }
-    };
+    return boardStack;
   }
 
   // test client (see below)
