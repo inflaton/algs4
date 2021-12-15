@@ -29,6 +29,7 @@ package com.inflaton.practices.gempuzzle;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Stopwatch;
 
 public class PuzzleChecker {
 
@@ -50,8 +51,9 @@ public class PuzzleChecker {
       StdOut.print(filename + ": ");
       // solve the slider puzzle
       Board initial = new Board(tiles);
+      Stopwatch stopwatch = new Stopwatch();
       Solver solver = new Solver(initial);
-      StdOut.println(solver.moves());
+      StdOut.println(solver.moves() + "\t(" + stopwatch.elapsedTime() + "s)");
     }
   }
 }

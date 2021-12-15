@@ -4,6 +4,7 @@ import com.inflaton.datastructures.priorityqueue.MinPQ;
 import com.inflaton.datastructures.stack.Stack;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Stopwatch;
 
 import java.util.Comparator;
 
@@ -35,7 +36,7 @@ public class Solver {
   public Solver(Board initial) {
     if (initial == null) throw new IllegalArgumentException();
     final Comparator<Node> nodeComparator =
-        Comparator.comparingInt(Node::getPriority).thenComparingInt(o -> o.moves);
+        Comparator.comparingInt(Node::getPriority).thenComparingInt(o -> o.manhattan);
     MinPQ<Node> pq = new MinPQ<>(nodeComparator);
     MinPQ<Node> twinPQ = new MinPQ<>(nodeComparator);
 
@@ -109,8 +110,10 @@ public class Solver {
     for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) tiles[i][j] = in.readInt();
     Board initial = new Board(tiles);
 
+    Stopwatch stopwatch = new Stopwatch();
     // solve the puzzle
     Solver solver = new Solver(initial);
+    double elapsedTime = stopwatch.elapsedTime();
 
     // print solution to standard output
     if (!solver.isSolvable()) StdOut.println("No solution possible");
@@ -123,5 +126,7 @@ public class Solver {
         i++;
       }
     }
+
+    StdOut.println("elapsedTime: " + elapsedTime);
   }
 }
