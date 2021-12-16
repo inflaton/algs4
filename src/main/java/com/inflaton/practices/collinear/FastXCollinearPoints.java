@@ -76,9 +76,6 @@ public class FastXCollinearPoints {
   private boolean validateLineSegment(Point pp, Point[] points, int start, int end) {
     int len = end - start;
     if (len >= 3) {
-      if (!stableSort) {
-        Arrays.sort(points, start, end);
-      }
       return pp.compareTo(points[start]) < 0;
     }
     return false;
@@ -110,8 +107,11 @@ public class FastXCollinearPoints {
   private void sort(Point[] points, Comparator<Point> comparator) {
     if (sortInterface == null) {
       Arrays.sort(points, comparator);
-    } else {
+    } else if (stableSort) {
       sortInterface.sort(points, comparator);
+    } else {
+      sortInterface.sort(
+          points, comparator == null ? null : comparator.thenComparing(Comparator.naturalOrder()));
     }
   }
 
