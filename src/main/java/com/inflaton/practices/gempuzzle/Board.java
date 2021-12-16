@@ -11,7 +11,7 @@ import java.util.Iterator;
 public class Board {
 
   private final int n;
-  private final int[] tiles;
+  private final byte[] tiles;
   private ArrayList<Board> neighbors;
 
   // create a board from an n-by-n array of tiles,
@@ -25,13 +25,13 @@ public class Board {
     }
 
     this.n = tiles.length;
-    this.tiles = new int[n * n];
+    this.tiles = new byte[n * n];
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         if (tiles[i][j] < 0 || tiles[i][j] > n * n - 1) {
           throw new IllegalArgumentException();
         }
-        this.tiles[i * n + j] = tiles[i][j];
+        this.tiles[i * n + j] = (byte) tiles[i][j];
       }
     }
   }
@@ -129,8 +129,8 @@ public class Board {
 
   private Board createSwap(int row, int col, int r, int c) {
     Board b = new Board(this);
-    b.tiles[row * n + col] = get(r, c);
-    b.tiles[r * n + c] = get(row, col);
+    b.tiles[row * n + col] = (byte) get(r, c);
+    b.tiles[r * n + c] = (byte) get(row, col);
     return b;
   }
 
