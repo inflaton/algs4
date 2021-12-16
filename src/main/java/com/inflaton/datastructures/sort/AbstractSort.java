@@ -27,6 +27,15 @@ public abstract class AbstractSort<T extends Comparable<T>> implements SortInter
 
   public abstract void doSort(T[] a);
 
+  protected void insertionSort(T[] a, int lo, int hi) {
+    for (int i = lo + 1; i <= hi; i++) {
+      for (int j = i; j > lo && less(a[j], a[j - 1]); j--) {
+        swap(a, j, j - 1);
+      }
+    }
+    assert isSorted(a, lo, hi);
+  }
+
   /***************************************************************************
    *  Helper sorting functions.
    ***************************************************************************/

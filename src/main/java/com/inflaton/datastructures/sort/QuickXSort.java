@@ -23,15 +23,6 @@ public class QuickXSort<T extends Comparable<T>> extends QuickSort<T> {
     sort(a, j + 1, hi);
   }
 
-  private void insertionSort(T[] a, int lo, int hi) {
-    for (int i = lo + 1; i <= hi; i++) {
-      for (int j = i; j > lo && less(a[j], a[j - 1]); j--) {
-        swap(a, j, j - 1);
-      }
-    }
-    assert isSorted(a, lo, hi);
-  }
-
   // partition the subarray a[lo..hi] so that a[lo..j-1] <= a[j] <= a[j+1..hi]
   // and return the index j.
   private int partition(T[] a, int lo, int hi) {
