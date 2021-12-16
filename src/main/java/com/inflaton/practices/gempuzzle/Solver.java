@@ -10,12 +10,12 @@ import java.util.Comparator;
 
 public class Solver {
 
-  private static class Node {
+  private static class SearchNode {
     Board board;
-    Node parent;
+    SearchNode parent;
     private final int moves, manhattan;
 
-    public Node(Board board, int moves) {
+    public SearchNode(Board board, int moves) {
       this.board = board;
       this.moves = moves;
       manhattan = board.manhattan();
@@ -35,23 +35,23 @@ public class Solver {
   // find a solution to the initial board (using the A* algorithm)
   public Solver(Board initial) {
     if (initial == null) throw new IllegalArgumentException();
-    final Comparator<Node> nodeComparator =
-        Comparator.comparingInt(Node::getPriority).thenComparingInt(o -> o.manhattan);
-    MinPQ<Node> pq = new MinPQ<>(nodeComparator);
-    MinPQ<Node> twinPQ = new MinPQ<>(nodeComparator);
+    final Comparator<SearchNode> nodeComparator =
+        Comparator.comparingInt(SearchNode::getPriority).thenComparingInt(o -> o.manhattan);
+    MinPQ<SearchNode> pq = new MinPQ<>(nodeComparator);
+    MinPQ<SearchNode> twinPQ = new MinPQ<>(nodeComparator);
 
-    Node node = new Node(initial, 0);
-    pq.insert(node);
+    SearchNode searchNode = new SearchNode(initial, 0);
+    pq.insert(searchNode);
 
-    node = new Node(initial.twin(), 0);
-    twinPQ.insert(node);
+    searchNode = new SearchNode(initial.twin(), 0);
+    twinPQ.insert(searchNode);
 
-    Node current = null;
-    Node twinCurrent = null;
+    SearchNode current = null;
+    SearchNode twinCurrent = null;
 
     while (!pq.isEmpty() && !twinPQ.isEmpty()) {
-      current = moveOneStep(pq);
-      twinCurrent = moveOneStep(twinPQ);
+      current = runSearch(pq, false);
+      twinCurrent = runSearch(twinPQ, true);
 
       if (current.isGoal()) {
         do {
@@ -66,18 +66,19 @@ public class Solver {
     }
   }
 
-  private Node moveOneStep(MinPQ<Node> pq) {
-    Node current = pq.delMin();
+  private SearchNode runSearch(MinPQ<SearchNode> pq, boolean isTwin) {
+    SearchNode current = pq.delMin();
     int newMoves = current.moves + 1;
 
     for (Board board : current.board.neighbors()) {
       if (current.parent == null || !board.equals(current.parent.board)) {
-        Node node = new Node(board, newMoves);
-        node.parent = current;
-        pq.insert(node);
+        SearchNode searchNode = new SearchNode(board, newMoves);
+        searchNode.parent = current;
+        pq.insert(searchNode);
       }
     }
-
+    // no need to maintain backtrace for twin board
+    if (isTwin) current.parent = null;
     return current;
   }
 

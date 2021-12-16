@@ -12,7 +12,6 @@ public class Board {
 
   private final int n;
   private final byte[] tiles;
-  private ArrayList<Board> neighbors;
 
   // create a board from an n-by-n array of tiles,
   // where tiles[row][col] = tile at (row, col)
@@ -134,47 +133,41 @@ public class Board {
     return b;
   }
 
-  private void addNeighbor(int row, int col, int r, int c) {
+  private void addNeighbor(ArrayList<Board> neighbors, int row, int col, int r, int c) {
     neighbors.add(createSwap(row, col, r, c));
-  }
-
-  private ArrayList<Board> getNeighbors() {
-    if (neighbors == null) {
-      neighbors = new ArrayList<>();
-
-      int row = -1;
-      int col = -1;
-      for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-          int v = get(i, j);
-          if (v == 0) {
-            row = i;
-            col = j;
-            break;
-          }
-        }
-      }
-
-      if (row > 0) {
-        addNeighbor(row, col, row - 1, col);
-      }
-      if (row < n - 1) {
-        addNeighbor(row, col, row + 1, col);
-      }
-      if (col > 0) {
-        addNeighbor(row, col, row, col - 1);
-      }
-      if (col < n - 1) {
-        addNeighbor(row, col, row, col + 1);
-      }
-    }
-
-    return neighbors;
   }
 
   // all neighboring boards
   public Iterable<Board> neighbors() {
-    return getNeighbors();
+    ArrayList<Board> neighbors = new ArrayList<>();
+
+    int row = -1;
+    int col = -1;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        int v = get(i, j);
+        if (v == 0) {
+          row = i;
+          col = j;
+          break;
+        }
+      }
+    }
+
+    if (row > 0) {
+      addNeighbor(neighbors, row, col, row - 1, col);
+    }
+    if (row < n - 1) {
+      addNeighbor(neighbors, row, col, row + 1, col);
+    }
+    if (col > 0) {
+      addNeighbor(neighbors, row, col, row, col - 1);
+    }
+    if (col < n - 1) {
+      addNeighbor(neighbors, row, col, row, col + 1);
+    }
+
+    return neighbors;
   }
 
   // a board that is obtained by exchanging any pair of tiles
