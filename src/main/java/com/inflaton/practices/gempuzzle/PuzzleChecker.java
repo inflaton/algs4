@@ -35,8 +35,11 @@ public class PuzzleChecker {
 
   public static void main(String[] args) {
 
+    Stopwatch sw = new Stopwatch();
+    int files = 0;
     // for each command-line argument
     for (String filename : args) {
+      files++;
 
       // read in the board specified in the filename
       In in = new In(filename);
@@ -55,6 +58,8 @@ public class PuzzleChecker {
       Solver solver = new Solver(initial);
       StdOut.println(solver.moves() + "\t(" + stopwatch.elapsedTime() + "s)");
     }
+
+    StdOut.println("Total files processed: " + files + "\t(" + sw.elapsedTime() + "s)");
   }
 }
 
