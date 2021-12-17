@@ -26,6 +26,7 @@
 package com.inflaton.datastructures.symboltable;
 
 import com.inflaton.datastructures.queue.Queue;
+import com.inflaton.datastructures.utils.TreePrinter;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -66,7 +67,7 @@ import java.util.NoSuchElementException;
 public class BST<Key extends Comparable<Key>, Value> {
   private Node root; // root of BST
 
-  private class Node {
+  private class Node implements TreePrinter.PrintableNode {
     private Key key; // sorted by key
     private Value val; // associated data
     private Node left, right; // left and right subtrees
@@ -76,6 +77,18 @@ public class BST<Key extends Comparable<Key>, Value> {
       this.key = key;
       this.val = val;
       this.size = size;
+    }
+
+    public TreePrinter.PrintableNode getLeft() {
+      return left;
+    }
+
+    public TreePrinter.PrintableNode getRight() {
+      return right;
+    }
+
+    public String getText() {
+      return key + "=>" + val;
     }
   }
 
@@ -470,6 +483,54 @@ public class BST<Key extends Comparable<Key>, Value> {
     return keys;
   }
 
+  public Iterable<Key> inorderMorrisTraversal() {
+    return morrisTraversal(true);
+  }
+
+  public Iterable<Key> preorderMorrisTraversal() {
+    return morrisTraversal(false);
+  }
+
+  // inorder: true  --> inorder traversal
+  // inorder: false --> preorder traversal
+  private Iterable<Key> morrisTraversal(boolean inorder) {
+    Queue<Key> keys = new Queue<Key>();
+    Node current, predecessor;
+    current = root;
+    while (current != null) {
+      if (current.left == null) {
+        keys.enqueue(current.key);
+        current = current.right;
+      } else {
+        // Find the inorder predecessor of current
+        predecessor = current.left;
+        while (predecessor.right != null && predecessor.right != current)
+          predecessor = predecessor.right;
+
+        // Revert the changes, fix the right child of predecessor
+        if (predecessor.right == null) {
+          predecessor.right = current;
+          if (!inorder) keys.enqueue(current.key);
+          current = current.left;
+        }
+
+        /* Revert the changes made
+        in the 'if' part
+        to restore the original
+        tree i.e., fix
+        the right child of predecessor*/
+        else {
+          predecessor.right = null;
+          if (inorder) keys.enqueue(current.key);
+          current = current.right;
+        } /* End of if condition predecessor->right == NULL
+           */
+      } /* End of if condition current->left == NULL*/
+    } /* End of while */
+
+    return keys;
+  }
+
   /*************************************************************************
    *  Check integrity of BST data structure.
    ***************************************************************************/
@@ -526,11 +587,19 @@ public class BST<Key extends Comparable<Key>, Value> {
       st.put(key, i);
     }
 
+    StdOut.println(TreePrinter.getTreeDisplay(st.root));
+
+    StdOut.println("levelOrder:");
     for (String s : st.levelOrder()) StdOut.println(s + " " + st.get(s));
 
-    StdOut.println();
-
+    StdOut.println("inorder:");
     for (String s : st.keys()) StdOut.println(s + " " + st.get(s));
+
+    StdOut.println("inorderMorrisTraversal:");
+    for (String s : st.inorderMorrisTraversal()) StdOut.println(s + " " + st.get(s));
+
+    StdOut.println("preorderMorrisTraversal:");
+    for (String s : st.preorderMorrisTraversal()) StdOut.println(s + " " + st.get(s));
   }
 }
 
