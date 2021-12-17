@@ -1,4 +1,4 @@
-package com.inflaton.datastructures.utils;
+package com.inflaton.datastructures.binarytree;
 
 public enum TreeTraversalOrder {
   PRE_ORDER,

@@ -25,15 +25,13 @@
 
 package com.inflaton.datastructures.symboltable;
 
+import com.inflaton.datastructures.binarytree.TreeNode;
+import com.inflaton.datastructures.binarytree.TreeTraversalOrder;
+import com.inflaton.datastructures.binarytree.TreeUtil;
 import com.inflaton.datastructures.queue.Queue;
-import com.inflaton.datastructures.stack.Stack;
-import com.inflaton.datastructures.utils.TreePrinter;
-import com.inflaton.datastructures.utils.TreeTraversalOrder;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -70,7 +68,7 @@ import java.util.NoSuchElementException;
 public class BST<Key extends Comparable<Key>, Value> {
   private Node root; // root of BST
 
-  private class Node implements TreePrinter.PrintableNode {
+  private class Node implements TreeNode {
     private final Key key; // sorted by key
     private Value val; // associated data
     private Node left, right; // left and right subtrees
@@ -82,11 +80,11 @@ public class BST<Key extends Comparable<Key>, Value> {
       this.size = size;
     }
 
-    public TreePrinter.PrintableNode getLeft() {
+    public TreeNode getLeft() {
       return left;
     }
 
-    public TreePrinter.PrintableNode getRight() {
+    public TreeNode getRight() {
       return right;
     }
 
@@ -521,152 +519,6 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     return keys;
   }
-  // This method returns an iterator for a given TreeTraversalOrder.
-  // The ways in which you can traverse the tree are in four different ways:
-  // preorder, inorder, postorder and levelorder.
-  public Iterator<Key> traverse(TreeTraversalOrder order) {
-    switch (order) {
-      case PRE_ORDER:
-        return preOrderTraversal();
-      case IN_ORDER:
-        return inOrderTraversal();
-      case POST_ORDER:
-        return postOrderTraversal();
-      case LEVEL_ORDER:
-        return levelOrderTraversal();
-      default:
-        return null;
-    }
-  }
-
-  // Returns as iterator to traverse the tree in pre order
-  private Iterator<Key> preOrderTraversal() {
-
-    final int expectedNodeCount = size();
-    final Stack<Node> stack = new Stack<>();
-    stack.push(root);
-
-    return new Iterator<Key>() {
-
-      public boolean hasNext() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        return root != null && !stack.isEmpty();
-      }
-
-      public Key next() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        Node node = stack.pop();
-        if (node.right != null) stack.push(node.right);
-        if (node.left != null) stack.push(node.left);
-        return node.key;
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  // Returns as iterator to traverse the tree in order
-  private Iterator<Key> inOrderTraversal() {
-
-    final int expectedNodeCount = size();
-    final Stack<Node> stack = new Stack<>();
-    stack.push(root);
-
-    return new Iterator<Key>() {
-      Node trav = root;
-
-      public boolean hasNext() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        return root != null && !stack.isEmpty();
-      }
-
-      public Key next() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-
-        // Dig left
-        while (trav != null && trav.left != null) {
-          stack.push(trav.left);
-          trav = trav.left;
-        }
-
-        Node node = stack.pop();
-
-        // Try moving down right once
-        if (node.right != null) {
-          stack.push(node.right);
-          trav = node.right;
-        }
-
-        return node.key;
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  // Returns as iterator to traverse the tree in post order
-  private Iterator<Key> postOrderTraversal() {
-    final int expectedNodeCount = size();
-    final Stack<Node> stack1 = new Stack<>();
-    final Stack<Node> stack2 = new Stack<>();
-    stack1.push(root);
-    while (!stack1.isEmpty()) {
-      Node node = stack1.pop();
-      if (node != null) {
-        stack2.push(node);
-        if (node.left != null) stack1.push(node.left);
-        if (node.right != null) stack1.push(node.right);
-      }
-    }
-    return new Iterator<Key>() {
-
-      public boolean hasNext() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        return root != null && !stack2.isEmpty();
-      }
-
-      public Key next() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        return stack2.pop().key;
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  // Returns as iterator to traverse the tree in level order
-  private Iterator<Key> levelOrderTraversal() {
-
-    final int expectedNodeCount = size();
-    final Queue<Node> queue = new Queue<>();
-    queue.enqueue(root);
-
-    return new Iterator<Key>() {
-
-      public boolean hasNext() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        return root != null && !queue.isEmpty();
-      }
-
-      public Key next() {
-        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
-        Node node = queue.dequeue();
-        if (node.left != null) queue.enqueue(node.left);
-        if (node.right != null) queue.enqueue(node.right);
-        return node.key;
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
 
   /*************************************************************************
    *  Check integrity of BST data structure.
@@ -741,10 +593,17 @@ public class BST<Key extends Comparable<Key>, Value> {
     for (String s : st.morrisTraversal(TreeTraversalOrder.PRE_ORDER))
       StdOut.println(s + " " + st.get(s));
 
-    StdOut.println("postorderTraversal:");
-    for (Iterator<String> it = st.traverse(TreeTraversalOrder.POST_ORDER); it.hasNext(); ) {
-      String s = it.next();
-      StdOut.println(s + " " + st.get(s));
+    TreeTraversalOrder[] orders = {
+      TreeTraversalOrder.PRE_ORDER,
+      TreeTraversalOrder.IN_ORDER,
+      TreeTraversalOrder.POST_ORDER,
+      TreeTraversalOrder.LEVEL_ORDER
+    };
+
+    for (int i = 0; i < orders.length; i++) {
+      StdOut.println("order: " + orders[i]);
+      for (TreeNode n : TreeUtil.traverse(st.root, orders[i])) StdOut.print(n.getText() + " ");
+      StdOut.println();
     }
   }
 }
