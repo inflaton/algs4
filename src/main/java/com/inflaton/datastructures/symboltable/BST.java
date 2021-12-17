@@ -26,10 +26,14 @@
 package com.inflaton.datastructures.symboltable;
 
 import com.inflaton.datastructures.queue.Queue;
+import com.inflaton.datastructures.stack.Stack;
 import com.inflaton.datastructures.utils.TreePrinter;
+import com.inflaton.datastructures.utils.TreeTraversalOrder;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -40,9 +44,8 @@ import java.util.NoSuchElementException;
  * <em>keys</em> method for iterating over all of the keys. A symbol table implements the
  * <em>associative array</em> abstraction: when associating a value with a key that is already in
  * the symbol table, the convention is to replace the old value with the new value. Unlike {@link
- * java.util.Map}, this class uses the convention that values cannot be {@code null}—setting the
- * value associated with a key to {@code null} is equivalent to deleting the key from the symbol
- * table.
+ * Map}, this class uses the convention that values cannot be {@code null}—setting the value
+ * associated with a key to {@code null} is equivalent to deleting the key from the symbol table.
  *
  * <p>It requires that the key type implements the {@code Comparable} interface and calls the {@code
  * compareTo()} and method to compare two keys. It does not call either {@code equals()} or {@code
@@ -68,7 +71,7 @@ public class BST<Key extends Comparable<Key>, Value> {
   private Node root; // root of BST
 
   private class Node implements TreePrinter.PrintableNode {
-    private Key key; // sorted by key
+    private final Key key; // sorted by key
     private Value val; // associated data
     private Node left, right; // left and right subtrees
     private int size; // number of nodes in subtree
@@ -483,17 +486,7 @@ public class BST<Key extends Comparable<Key>, Value> {
     return keys;
   }
 
-  public Iterable<Key> inorderMorrisTraversal() {
-    return morrisTraversal(true);
-  }
-
-  public Iterable<Key> preorderMorrisTraversal() {
-    return morrisTraversal(false);
-  }
-
-  // inorder: true  --> inorder traversal
-  // inorder: false --> preorder traversal
-  private Iterable<Key> morrisTraversal(boolean inorder) {
+  private Iterable<Key> morrisTraversal(TreeTraversalOrder order) {
     Queue<Key> keys = new Queue<Key>();
     Node current, predecessor;
     current = root;
@@ -507,21 +500,19 @@ public class BST<Key extends Comparable<Key>, Value> {
         while (predecessor.right != null && predecessor.right != current)
           predecessor = predecessor.right;
 
-        // Revert the changes, fix the right child of predecessor
+        // Make current as right child of its inorder predecessor
         if (predecessor.right == null) {
           predecessor.right = current;
-          if (!inorder) keys.enqueue(current.key);
+          if (order == TreeTraversalOrder.PRE_ORDER) keys.enqueue(current.key);
           current = current.left;
         }
 
-        /* Revert the changes made
-        in the 'if' part
-        to restore the original
-        tree i.e., fix
-        the right child of predecessor*/
+        // Revert the changes made in the 'if' part
+        // to restore the original tree i.e., fix
+        // the right child of predecessor
         else {
           predecessor.right = null;
-          if (inorder) keys.enqueue(current.key);
+          if (order == TreeTraversalOrder.IN_ORDER) keys.enqueue(current.key);
           current = current.right;
         } /* End of if condition predecessor->right == NULL
            */
@@ -529,6 +520,152 @@ public class BST<Key extends Comparable<Key>, Value> {
     } /* End of while */
 
     return keys;
+  }
+  // This method returns an iterator for a given TreeTraversalOrder.
+  // The ways in which you can traverse the tree are in four different ways:
+  // preorder, inorder, postorder and levelorder.
+  public Iterator<Key> traverse(TreeTraversalOrder order) {
+    switch (order) {
+      case PRE_ORDER:
+        return preOrderTraversal();
+      case IN_ORDER:
+        return inOrderTraversal();
+      case POST_ORDER:
+        return postOrderTraversal();
+      case LEVEL_ORDER:
+        return levelOrderTraversal();
+      default:
+        return null;
+    }
+  }
+
+  // Returns as iterator to traverse the tree in pre order
+  private Iterator<Key> preOrderTraversal() {
+
+    final int expectedNodeCount = size();
+    final Stack<Node> stack = new Stack<>();
+    stack.push(root);
+
+    return new Iterator<Key>() {
+
+      public boolean hasNext() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        return root != null && !stack.isEmpty();
+      }
+
+      public Key next() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        Node node = stack.pop();
+        if (node.right != null) stack.push(node.right);
+        if (node.left != null) stack.push(node.left);
+        return node.key;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  // Returns as iterator to traverse the tree in order
+  private Iterator<Key> inOrderTraversal() {
+
+    final int expectedNodeCount = size();
+    final Stack<Node> stack = new Stack<>();
+    stack.push(root);
+
+    return new Iterator<Key>() {
+      Node trav = root;
+
+      public boolean hasNext() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        return root != null && !stack.isEmpty();
+      }
+
+      public Key next() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+
+        // Dig left
+        while (trav != null && trav.left != null) {
+          stack.push(trav.left);
+          trav = trav.left;
+        }
+
+        Node node = stack.pop();
+
+        // Try moving down right once
+        if (node.right != null) {
+          stack.push(node.right);
+          trav = node.right;
+        }
+
+        return node.key;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  // Returns as iterator to traverse the tree in post order
+  private Iterator<Key> postOrderTraversal() {
+    final int expectedNodeCount = size();
+    final Stack<Node> stack1 = new Stack<>();
+    final Stack<Node> stack2 = new Stack<>();
+    stack1.push(root);
+    while (!stack1.isEmpty()) {
+      Node node = stack1.pop();
+      if (node != null) {
+        stack2.push(node);
+        if (node.left != null) stack1.push(node.left);
+        if (node.right != null) stack1.push(node.right);
+      }
+    }
+    return new Iterator<Key>() {
+
+      public boolean hasNext() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        return root != null && !stack2.isEmpty();
+      }
+
+      public Key next() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        return stack2.pop().key;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  // Returns as iterator to traverse the tree in level order
+  private Iterator<Key> levelOrderTraversal() {
+
+    final int expectedNodeCount = size();
+    final Queue<Node> queue = new Queue<>();
+    queue.enqueue(root);
+
+    return new Iterator<Key>() {
+
+      public boolean hasNext() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        return root != null && !queue.isEmpty();
+      }
+
+      public Key next() {
+        if (expectedNodeCount != size()) throw new ConcurrentModificationException();
+        Node node = queue.dequeue();
+        if (node.left != null) queue.enqueue(node.left);
+        if (node.right != null) queue.enqueue(node.right);
+        return node.key;
+      }
+
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 
   /*************************************************************************
@@ -587,22 +724,30 @@ public class BST<Key extends Comparable<Key>, Value> {
       st.put(key, i);
     }
 
-    StdOut.println(TreePrinter.getTreeDisplay(st.root));
+    //    StdOut.println(TreePrinter.getTreeDisplay(st.root));
+    st.root.printTree();
+
+    StdOut.println("keys:");
+    for (String s : st.keys()) StdOut.println(s + " " + st.get(s));
 
     StdOut.println("levelOrder:");
     for (String s : st.levelOrder()) StdOut.println(s + " " + st.get(s));
 
-    StdOut.println("inorder:");
-    for (String s : st.keys()) StdOut.println(s + " " + st.get(s));
-
     StdOut.println("inorderMorrisTraversal:");
-    for (String s : st.inorderMorrisTraversal()) StdOut.println(s + " " + st.get(s));
+    for (String s : st.morrisTraversal(TreeTraversalOrder.IN_ORDER))
+      StdOut.println(s + " " + st.get(s));
 
     StdOut.println("preorderMorrisTraversal:");
-    for (String s : st.preorderMorrisTraversal()) StdOut.println(s + " " + st.get(s));
+    for (String s : st.morrisTraversal(TreeTraversalOrder.PRE_ORDER))
+      StdOut.println(s + " " + st.get(s));
+
+    StdOut.println("postorderTraversal:");
+    for (Iterator<String> it = st.traverse(TreeTraversalOrder.POST_ORDER); it.hasNext(); ) {
+      String s = it.next();
+      StdOut.println(s + " " + st.get(s));
+    }
   }
 }
-
 /******************************************************************************
  *  Copyright 2002-2020, Robert Sedgewick and Kevin Wayne.
  *
