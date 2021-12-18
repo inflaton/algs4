@@ -29,6 +29,7 @@ import com.inflaton.datastructures.binarytree.TreeNode;
 import com.inflaton.datastructures.binarytree.TreeTraversalOrder;
 import com.inflaton.datastructures.binarytree.TreeUtil;
 import com.inflaton.datastructures.queue.Queue;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -470,7 +471,7 @@ public class BST<Key extends Comparable<Key>, Value> {
    *
    * @return the keys in the BST in level order traversal
    */
-  public Iterable<Key> levelOrder() {
+  private Iterable<Key> levelOrder() {
     Queue<Key> keys = new Queue<Key>();
     Queue<Node> queue = new Queue<Node>();
     queue.enqueue(root);
@@ -484,7 +485,10 @@ public class BST<Key extends Comparable<Key>, Value> {
     return keys;
   }
 
-  private Iterable<Key> morrisTraversal(TreeTraversalOrder order) {
+  public Iterable<Key> traverse(TreeTraversalOrder order) {
+    if (TreeTraversalOrder.LEVEL_ORDER == order) return levelOrder();
+    if (TreeTraversalOrder.POST_ORDER == order) return postOrder();
+
     Queue<Key> keys = new Queue<Key>();
     Node current, predecessor;
     current = root;
@@ -512,10 +516,43 @@ public class BST<Key extends Comparable<Key>, Value> {
           predecessor.right = null;
           if (order == TreeTraversalOrder.IN_ORDER) keys.enqueue(current.key);
           current = current.right;
-        } /* End of if condition predecessor->right == NULL
-           */
-      } /* End of if condition current->left == NULL*/
-    } /* End of while */
+        } // End of if condition predecessor->right == NULL
+      } // End of if condition current->left == NULL
+    } // End of while
+
+    return keys;
+  }
+
+  private Iterable<Key> postOrder() {
+    Stack<Key> keys = new Stack<Key>();
+    Node current, predecessor;
+    current = root;
+    while (current != null) {
+      if (current.right == null) {
+        keys.push(current.key);
+        current = current.left;
+      } else {
+        // Find the inorder predecessor of current
+        predecessor = current.right;
+        while (predecessor.left != null && predecessor.left != current)
+          predecessor = predecessor.left;
+
+        // Make current as left child of its inorder predecessor
+        if (predecessor.left == null) {
+          predecessor.left = current;
+          keys.push(current.key);
+          current = current.right;
+        }
+
+        // Revert the changes made in the 'if' part
+        // to restore the original tree i.e., fix
+        // the left child of predecessor
+        else {
+          predecessor.left = null;
+          current = current.left;
+        } // End of if condition predecessor->left == NULL
+      } // End of if condition current->right == NULL
+    } // End of while
 
     return keys;
   }
@@ -580,18 +617,8 @@ public class BST<Key extends Comparable<Key>, Value> {
     st.root.printTree();
 
     StdOut.println("keys:");
-    for (String s : st.keys()) StdOut.println(s + " " + st.get(s));
-
-    StdOut.println("levelOrder:");
-    for (String s : st.levelOrder()) StdOut.println(s + " " + st.get(s));
-
-    StdOut.println("inorderMorrisTraversal:");
-    for (String s : st.morrisTraversal(TreeTraversalOrder.IN_ORDER))
-      StdOut.println(s + " " + st.get(s));
-
-    StdOut.println("preorderMorrisTraversal:");
-    for (String s : st.morrisTraversal(TreeTraversalOrder.PRE_ORDER))
-      StdOut.println(s + " " + st.get(s));
+    for (String s : st.keys()) StdOut.print(s + "=>" + st.get(s) + " ");
+    StdOut.println();
 
     TreeTraversalOrder[] orders = {
       TreeTraversalOrder.PRE_ORDER,
@@ -600,6 +627,14 @@ public class BST<Key extends Comparable<Key>, Value> {
       TreeTraversalOrder.LEVEL_ORDER
     };
 
+    StdOut.println("MorrisTraversal:");
+    for (int i = 0; i < orders.length; i++) {
+      StdOut.println("order: " + orders[i]);
+      for (String s : st.traverse(orders[i])) StdOut.print(s + "=>" + st.get(s) + " ");
+      StdOut.println();
+    }
+
+    StdOut.println("NonRecursiveTraversal:");
     for (int i = 0; i < orders.length; i++) {
       StdOut.println("order: " + orders[i]);
       for (TreeNode n : TreeUtil.traverse(st.root, orders[i])) StdOut.print(n.getText() + " ");
