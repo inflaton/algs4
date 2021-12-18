@@ -13,10 +13,54 @@ public class TreeUtil {
   public static void printTree(TreeNode root) {
     if (root == null) {
       System.out.println("<empty tree>");
-    } else {
-      root.printTree();
+      return;
     }
+
+    TreeNode right = root.getRight();
+    if (right != null) {
+      printTree(right, true, "");
+    }
+
+    printNodeValue(root);
+
+    TreeNode left = root.getLeft();
+    if (left != null) {
+      printTree(left, false, "");
+    }
+
     System.out.println();
+  }
+
+  private static void printNodeValue(TreeNode node) {
+    if (node.getText() == null) {
+      System.out.print("<null>");
+    } else {
+      System.out.print(node.getText());
+    }
+    System.out.print('\n');
+  }
+
+  // use string and not StringBuffer on purpose as we need to change the indent at
+  // each recursion
+  private static void printTree(TreeNode node, boolean isRight, String indent) {
+    TreeNode right = node.getRight();
+    if (right != null) {
+      printTree(right, true, indent + (isRight ? "        " : " |      "));
+    }
+    System.out.print(indent);
+    if (isRight) {
+      System.out.print(" /");
+    } else {
+      System.out.print(" \\");
+    }
+    System.out.print("----- ");
+
+    printNodeValue(node);
+
+    TreeNode left = node.getLeft();
+    if (left != null) {
+      printTree(left, false, indent + (isRight ? " |      " : "        "));
+    }
   }
 
   // Print a binary tree.

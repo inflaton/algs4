@@ -29,7 +29,7 @@ import com.inflaton.datastructures.binarytree.TreeNode;
 import com.inflaton.datastructures.binarytree.TreeTraversalOrder;
 import com.inflaton.datastructures.binarytree.TreeUtil;
 import com.inflaton.datastructures.queue.Queue;
-import edu.princeton.cs.algs4.Stack;
+import com.inflaton.datastructures.stack.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -613,30 +613,29 @@ public class BST<Key extends Comparable<Key>, Value> {
       st.put(key, i);
     }
 
-    //    StdOut.println(TreePrinter.getTreeDisplay(st.root));
-    st.root.printTree();
+    TreeUtil.printTree(st.root);
 
-    StdOut.println("keys:");
+    StdOut.println("keys=>values:");
+    StdOut.print("\t");
     for (String s : st.keys()) StdOut.print(s + "=>" + st.get(s) + " ");
     StdOut.println();
 
     TreeTraversalOrder[] orders = {
-      TreeTraversalOrder.PRE_ORDER,
       TreeTraversalOrder.IN_ORDER,
+      TreeTraversalOrder.PRE_ORDER,
       TreeTraversalOrder.POST_ORDER,
       TreeTraversalOrder.LEVEL_ORDER
     };
 
-    StdOut.println("MorrisTraversal:");
     for (int i = 0; i < orders.length; i++) {
       StdOut.println("order: " + orders[i]);
+      StdOut.println("\tMorrisTraversal:");
+      StdOut.print("\t");
       for (String s : st.traverse(orders[i])) StdOut.print(s + "=>" + st.get(s) + " ");
       StdOut.println();
-    }
 
-    StdOut.println("NonRecursiveTraversal:");
-    for (int i = 0; i < orders.length; i++) {
-      StdOut.println("order: " + orders[i]);
+      StdOut.println("\tNonRecursiveTraversal:");
+      StdOut.print("\t");
       for (TreeNode n : TreeUtil.traverse(st.root, orders[i])) StdOut.print(n.getText() + " ");
       StdOut.println();
     }
