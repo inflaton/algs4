@@ -171,6 +171,18 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     return null;
   }
 
+  // color associated with the given key in subtree rooted at x; null if no such key
+  private String getText(Key key) {
+    Node x = root;
+    while (x != null) {
+      int cmp = key.compareTo(x.key);
+      if (cmp < 0) x = x.left;
+      else if (cmp > 0) x = x.right;
+      else return x.getText();
+    }
+    return null;
+  }
+
   /**
    * Does this symbol table contain the given key?
    *
@@ -815,7 +827,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     StdOut.println("keys=>values:");
     StdOut.print("\t");
-    for (String s : st.keys()) StdOut.print(s + "=>" + st.get(s) + " ");
+    for (String s : st.keys()) StdOut.print(st.getText(s) + " ");
     StdOut.println();
 
     TreeTraversalOrder[] orders = {
@@ -829,7 +841,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
       StdOut.println("order: " + order);
       StdOut.println("\tMorrisTraversal:");
       StdOut.print("\t");
-      for (String s : st.traverse(order)) StdOut.print(s + "=>" + st.get(s) + " ");
+      for (String s : st.traverse(order)) StdOut.print(st.getText(s) + " ");
       StdOut.println();
 
       StdOut.println("\tNonRecursiveTraversal:");
