@@ -3,10 +3,10 @@ package com.inflaton.datastructures.binarytree;
 /** Node that can be printed */
 public interface TreeNode {
 
-  // Get getLeft() child
+  // Get left child
   public TreeNode getLeft();
 
-  // Get getRight() child
+  // Get right child
   public TreeNode getRight();
 
   // Get text to be printed
