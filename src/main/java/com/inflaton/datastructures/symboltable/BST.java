@@ -34,6 +34,7 @@ import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * The {@code BST} class represents an ordered symbol table of generic key-value pairs. It supports
@@ -627,16 +628,17 @@ public class BST<Key extends Comparable<Key>, Value> {
       TreeTraversalOrder.LEVEL_ORDER
     };
 
-    for (int i = 0; i < orders.length; i++) {
-      StdOut.println("order: " + orders[i]);
+    for (TreeTraversalOrder order : orders) {
+      StdOut.println("order: " + order);
       StdOut.println("\tMorrisTraversal:");
       StdOut.print("\t");
-      for (String s : st.traverse(orders[i])) StdOut.print(s + "=>" + st.get(s) + " ");
+      for (String s : st.traverse(order)) StdOut.print(s + "=>" + st.get(s) + " ");
       StdOut.println();
 
       StdOut.println("\tNonRecursiveTraversal:");
       StdOut.print("\t");
-      for (TreeNode n : TreeUtil.traverse(st.root, orders[i])) StdOut.print(n.getText() + " ");
+      for (TreeNode n : Objects.requireNonNull(TreeUtil.traverse(st.root, order)))
+        StdOut.print(n.getText() + " ");
       StdOut.println();
     }
   }
