@@ -15,7 +15,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.stack;
+package com.inflaton.datastructures.collection.stack;
 
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;

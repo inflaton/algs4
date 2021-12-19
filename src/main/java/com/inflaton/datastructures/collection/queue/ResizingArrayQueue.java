@@ -11,7 +11,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.queue;
+package com.inflaton.datastructures.collection.queue;
 
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;

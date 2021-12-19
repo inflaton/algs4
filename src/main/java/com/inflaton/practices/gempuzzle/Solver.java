@@ -1,7 +1,7 @@
 package com.inflaton.practices.gempuzzle;
 
 import com.inflaton.datastructures.priorityqueue.MinPQ;
-import com.inflaton.datastructures.stack.Stack;
+import com.inflaton.datastructures.collection.stack.Stack;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;

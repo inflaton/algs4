@@ -20,7 +20,7 @@
 package com.inflaton.datastructures.priorityqueue.client;
 
 import com.inflaton.datastructures.priorityqueue.MinPQ;
-import com.inflaton.datastructures.stack.Stack;
+import com.inflaton.datastructures.collection.stack.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 

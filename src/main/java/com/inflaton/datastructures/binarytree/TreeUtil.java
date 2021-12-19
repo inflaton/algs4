@@ -2,17 +2,25 @@
 // https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
 package com.inflaton.datastructures.binarytree;
 
-import com.inflaton.datastructures.queue.Queue;
-import com.inflaton.datastructures.stack.Stack;
+import com.inflaton.datastructures.collection.queue.Queue;
+import com.inflaton.datastructures.collection.stack.Stack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TreeUtil {
+  private static int widest;
+  private static int BIGGEST_HORIZONTAL_WIDTH = 16;
 
   public static void printTree(TreeNode root) {
     if (root == null) {
       System.out.println("<empty tree>");
+      return;
+    }
+
+    String display = getTreeDisplay(root);
+    if (widest <= BIGGEST_HORIZONTAL_WIDTH) {
+      System.out.println(display);
       return;
     }
 
@@ -73,7 +81,7 @@ public class TreeUtil {
 
     level.add(root);
     int nn = 1;
-    int widest = 0;
+    widest = 0;
 
     while (nn != 0) {
       nn = 0;
@@ -159,6 +167,7 @@ public class TreeUtil {
 
       perPiece /= 2;
     }
+    System.out.println("widest: " + widest);
     return sb.toString();
   }
 

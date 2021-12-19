@@ -26,7 +26,7 @@
 
 package com.inflaton.datastructures.symboltable;
 
-import com.inflaton.datastructures.queue.Queue;
+import com.inflaton.datastructures.collection.queue.Queue;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 

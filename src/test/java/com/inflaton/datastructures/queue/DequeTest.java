@@ -1,5 +1,6 @@
 package com.inflaton.datastructures.queue;
 
+import com.inflaton.datastructures.collection.queue.Deque;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
