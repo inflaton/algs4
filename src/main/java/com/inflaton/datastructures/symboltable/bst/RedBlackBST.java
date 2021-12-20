@@ -741,6 +741,10 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     return isBalanced(x.left, black) && isBalanced(x.right, black);
   }
 
+  public void printTree() {
+    TreeUtil.printTree(root);
+  }
+
   /**
    * Unit tests the {@code RedBlackBST} data type.
    *
@@ -753,7 +757,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
       st.put(key, i);
     }
 
-    TreeUtil.printTree(st.root);
+    st.printTree();
 
     StdOut.println("keys=>values:");
     StdOut.print("\t");

@@ -798,6 +798,10 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
     return true;
   }
 
+  public void printTree() {
+    TreeUtil.printTree(root);
+  }
+
   /**
    * Unit tests the {@code AVLTreeST} data type.
    *
@@ -810,7 +814,7 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
       st.put(key, i);
     }
 
-    TreeUtil.printTree(st.root);
+    st.printTree();
 
     StdOut.println("keys=>values:");
     StdOut.print("\t");
