@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeUtil {
-  private static int widest;
-  private static int BIGGEST_HORIZONTAL_WIDTH = 16;
+  private static int MAX_WIDTH = 180;
 
   public static void printTree(TreeNode root) {
     if (root == null) {
@@ -19,7 +18,16 @@ public class TreeUtil {
     }
 
     String display = getTreeDisplay(root);
-    if (widest <= BIGGEST_HORIZONTAL_WIDTH) {
+    String[] lines = display.split("\n");
+    int width = 0;
+    for (String line : lines) {
+      int len = line.length();
+      if (len > width) {
+        width = len;
+      }
+    }
+
+    if (width <= MAX_WIDTH) {
       System.out.println(display);
       return;
     }
@@ -81,7 +89,7 @@ public class TreeUtil {
 
     level.add(root);
     int nn = 1;
-    widest = 0;
+    int widest = 0;
 
     while (nn != 0) {
       nn = 0;
@@ -167,7 +175,7 @@ public class TreeUtil {
 
       perPiece /= 2;
     }
-    System.out.println("widest: " + widest);
+
     return sb.toString();
   }
 
@@ -265,5 +273,77 @@ public class TreeUtil {
       }
     }
     return result;
+  }
+
+  public static Iterable<TreeNode> morrisTraversal(TreeNode root, TreeTraversalOrder order) {
+    if (TreeTraversalOrder.LEVEL_ORDER == order) return levelOrderTraversal(root);
+    if (TreeTraversalOrder.POST_ORDER == order) return morrisTraversalPostOrder(root);
+
+    Queue<TreeNode> nodes = new Queue<TreeNode>();
+    TreeNode current, predecessor;
+    current = root;
+    while (current != null) {
+      if (current.getLeft() == null) {
+        nodes.enqueue(current);
+        current = current.getRight();
+      } else {
+        // Find the inorder predecessor of current
+        predecessor = current.getLeft();
+        while (predecessor.getRight() != null && predecessor.getRight() != current)
+          predecessor = predecessor.getRight();
+
+        // Make current as right child of its inorder predecessor
+        if (predecessor.getRight() == null) {
+          predecessor.setRight(current);
+          if (order == TreeTraversalOrder.PRE_ORDER) nodes.enqueue(current);
+          current = current.getLeft();
+        }
+
+        // Revert the changes made in the 'if' part
+        // to restore the original tree i.e., fix
+        // the right child of predecessor
+        else {
+          predecessor.setRight(null);
+          if (order == TreeTraversalOrder.IN_ORDER) nodes.enqueue(current);
+          current = current.getRight();
+        } // End of if condition predecessor->right == NULL
+      } // End of if condition current->left == NULL
+    } // End of while
+
+    return nodes;
+  }
+
+  private static Iterable<TreeNode> morrisTraversalPostOrder(TreeNode root) {
+    Stack<TreeNode> nodes = new Stack<TreeNode>();
+    TreeNode current, predecessor;
+    current = root;
+    while (current != null) {
+      if (current.getRight() == null) {
+        nodes.push(current);
+        current = current.getLeft();
+      } else {
+        // Find the inorder predecessor of current
+        predecessor = current.getRight();
+        while (predecessor.getLeft() != null && predecessor.getLeft() != current)
+          predecessor = predecessor.getLeft();
+
+        // Make current as left child of its inorder predecessor
+        if (predecessor.getLeft() == null) {
+          predecessor.setLeft(current);
+          nodes.push(current);
+          current = current.getRight();
+        }
+
+        // Revert the changes made in the 'if' part
+        // to restore the original tree i.e., fix
+        // the left child of predecessor
+        else {
+          predecessor.setLeft(null);
+          current = current.getLeft();
+        } // End of if condition predecessor->left == NULL
+      } // End of if condition current->right == NULL
+    } // End of while
+
+    return nodes;
   }
 }

@@ -25,14 +25,20 @@
 
 package com.inflaton.datastructures.symboltable.bst;
 
+import com.inflaton.datastructures.binarytree.TreeNode;
+import com.inflaton.datastructures.binarytree.TreeTraversalOrder;
+import com.inflaton.datastructures.binarytree.TreeUtil;
 import com.inflaton.datastructures.collection.queue.Queue;
-import com.inflaton.datastructures.symboltable.*;
+import com.inflaton.datastructures.symboltable.BinarySearchST;
+import com.inflaton.datastructures.symboltable.ST;
+import com.inflaton.datastructures.symboltable.SequentialSearchST;
 import com.inflaton.datastructures.symboltable.hash.LinearProbingHashST;
 import com.inflaton.datastructures.symboltable.hash.SeparateChainingHashST;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * The {@code AVLTreeST} class represents an ordered symbol table of generic key-value pairs. It
@@ -47,9 +53,9 @@ import java.util.NoSuchElementException;
  *
  * <p>This symbol table implementation uses internally an <a
  * href="https://en.wikipedia.org/wiki/AVL_tree">AVL tree </a> (Georgy Adelson-Velsky and Evgenii
- * Landis' tree) which is a self-balancing BST. In an AVL tree, the heights of the two child
- * subtrees of any node differ by at most one; if at any time they differ by more than one,
- * rebalancing is done to restore this property.
+ * Landis' tree) which is a self-balancing In an AVL tree, the heights of the two child subtrees of
+ * any node differ by at most one; if at any time they differ by more than one, rebalancing is done
+ * to restore this property.
  *
  * <p>This implementation requires that the key type implements the {@code Comparable} interface and
  * calls the {@code compareTo()} and method to compare two keys. It does not call either {@code
@@ -70,7 +76,7 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
   private Node root;
 
   /** This class represents an inner node of the AVL tree. */
-  private class Node {
+  private class Node implements TreeNode {
     private final Key key; // the key
     private Value val; // the associated value
     private int height; // height of the subtree
@@ -83,6 +89,26 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
       this.val = val;
       this.size = size;
       this.height = height;
+    }
+
+    public TreeNode getLeft() {
+      return left;
+    }
+
+    public void setLeft(TreeNode node) {
+      left = (Node) node;
+    }
+
+    public TreeNode getRight() {
+      return right;
+    }
+
+    public void setRight(TreeNode node) {
+      right = (Node) node;
+    }
+
+    public String getText() {
+      return key + "=>" + val;
     }
   }
 
@@ -152,6 +178,18 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
     Node x = get(root, key);
     if (x == null) return null;
     return x.val;
+  }
+
+  // color associated with the given key in subtree rooted at x; null if no such key
+  private String getText(Key key) {
+    Node x = root;
+    while (x != null) {
+      int cmp = key.compareTo(x.key);
+      if (cmp < 0) x = x.left;
+      else if (cmp > 0) x = x.right;
+      else return x.getText();
+    }
+    return null;
   }
 
   /**
@@ -562,6 +600,15 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
     return keysInOrder();
   }
 
+  public Iterable<Key> keys(TreeTraversalOrder order) {
+    Queue<Key> keys = new Queue<Key>();
+    for (TreeNode treeNode : TreeUtil.morrisTraversal(root, order)) {
+      Node node = (Node) treeNode;
+      keys.enqueue(node.key);
+    }
+    return keys;
+  }
+
   /**
    * Returns all keys in the symbol table following an in-order traversal.
    *
@@ -762,8 +809,34 @@ public class AVLTreeST<Key extends Comparable<Key>, Value> {
       String key = StdIn.readString();
       st.put(key, i);
     }
-    for (String s : st.keys()) StdOut.println(s + " " + st.get(s));
+
+    TreeUtil.printTree(st.root);
+
+    StdOut.println("keys=>values:");
+    StdOut.print("\t");
+    for (String s : st.keys()) StdOut.print(st.getText(s) + " ");
     StdOut.println();
+
+    TreeTraversalOrder[] orders = {
+      TreeTraversalOrder.IN_ORDER,
+      TreeTraversalOrder.PRE_ORDER,
+      TreeTraversalOrder.POST_ORDER,
+      TreeTraversalOrder.LEVEL_ORDER
+    };
+
+    for (TreeTraversalOrder order : orders) {
+      StdOut.println("order: " + order);
+      StdOut.println("\tMorrisTraversal:");
+      StdOut.print("\t");
+      for (String s : st.keys(order)) StdOut.print(st.getText(s) + " ");
+      StdOut.println();
+
+      StdOut.println("\tNonRecursiveTraversal:");
+      StdOut.print("\t");
+      for (TreeNode n : Objects.requireNonNull(TreeUtil.traverse(st.root, order)))
+        StdOut.print(n.getText() + " ");
+      StdOut.println();
+    }
   }
 }
 

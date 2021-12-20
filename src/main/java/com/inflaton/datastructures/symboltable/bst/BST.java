@@ -29,8 +29,9 @@ import com.inflaton.datastructures.binarytree.TreeNode;
 import com.inflaton.datastructures.binarytree.TreeTraversalOrder;
 import com.inflaton.datastructures.binarytree.TreeUtil;
 import com.inflaton.datastructures.collection.queue.Queue;
-import com.inflaton.datastructures.collection.stack.Stack;
-import com.inflaton.datastructures.symboltable.*;
+import com.inflaton.datastructures.symboltable.BinarySearchST;
+import com.inflaton.datastructures.symboltable.ST;
+import com.inflaton.datastructures.symboltable.SequentialSearchST;
 import com.inflaton.datastructures.symboltable.hash.LinearProbingHashST;
 import com.inflaton.datastructures.symboltable.hash.SeparateChainingHashST;
 import edu.princeton.cs.algs4.StdIn;
@@ -89,8 +90,16 @@ public class BST<Key extends Comparable<Key>, Value> {
       return left;
     }
 
+    public void setLeft(TreeNode node) {
+      left = (Node) node;
+    }
+
     public TreeNode getRight() {
       return right;
+    }
+
+    public void setRight(TreeNode node) {
+      right = (Node) node;
     }
 
     public String getText() {
@@ -412,6 +421,15 @@ public class BST<Key extends Comparable<Key>, Value> {
     return keys(min(), max());
   }
 
+  public Iterable<Key> keys(TreeTraversalOrder order) {
+    Queue<Key> keys = new Queue<Key>();
+    for (TreeNode treeNode : TreeUtil.morrisTraversal(root, order)) {
+      Node node = (Node) treeNode;
+      keys.enqueue(node.key);
+    }
+    return keys;
+  }
+
   /**
    * Returns all keys in the symbol table in the given range, as an {@code Iterable}.
    *
@@ -468,97 +486,6 @@ public class BST<Key extends Comparable<Key>, Value> {
   private int height(Node x) {
     if (x == null) return -1;
     return 1 + Math.max(height(x.left), height(x.right));
-  }
-
-  /**
-   * Returns the keys in the BST in level order (for debugging).
-   *
-   * @return the keys in the BST in level order traversal
-   */
-  private Iterable<Key> levelOrder() {
-    Queue<Key> keys = new Queue<Key>();
-    Queue<Node> queue = new Queue<Node>();
-    queue.enqueue(root);
-    while (!queue.isEmpty()) {
-      Node x = queue.dequeue();
-      if (x == null) continue;
-      keys.enqueue(x.key);
-      queue.enqueue(x.left);
-      queue.enqueue(x.right);
-    }
-    return keys;
-  }
-
-  public Iterable<Key> traverse(TreeTraversalOrder order) {
-    if (TreeTraversalOrder.LEVEL_ORDER == order) return levelOrder();
-    if (TreeTraversalOrder.POST_ORDER == order) return postOrder();
-
-    Queue<Key> keys = new Queue<Key>();
-    Node current, predecessor;
-    current = root;
-    while (current != null) {
-      if (current.left == null) {
-        keys.enqueue(current.key);
-        current = current.right;
-      } else {
-        // Find the inorder predecessor of current
-        predecessor = current.left;
-        while (predecessor.right != null && predecessor.right != current)
-          predecessor = predecessor.right;
-
-        // Make current as right child of its inorder predecessor
-        if (predecessor.right == null) {
-          predecessor.right = current;
-          if (order == TreeTraversalOrder.PRE_ORDER) keys.enqueue(current.key);
-          current = current.left;
-        }
-
-        // Revert the changes made in the 'if' part
-        // to restore the original tree i.e., fix
-        // the right child of predecessor
-        else {
-          predecessor.right = null;
-          if (order == TreeTraversalOrder.IN_ORDER) keys.enqueue(current.key);
-          current = current.right;
-        } // End of if condition predecessor->right == NULL
-      } // End of if condition current->left == NULL
-    } // End of while
-
-    return keys;
-  }
-
-  private Iterable<Key> postOrder() {
-    Stack<Key> keys = new Stack<Key>();
-    Node current, predecessor;
-    current = root;
-    while (current != null) {
-      if (current.right == null) {
-        keys.push(current.key);
-        current = current.left;
-      } else {
-        // Find the inorder predecessor of current
-        predecessor = current.right;
-        while (predecessor.left != null && predecessor.left != current)
-          predecessor = predecessor.left;
-
-        // Make current as left child of its inorder predecessor
-        if (predecessor.left == null) {
-          predecessor.left = current;
-          keys.push(current.key);
-          current = current.right;
-        }
-
-        // Revert the changes made in the 'if' part
-        // to restore the original tree i.e., fix
-        // the left child of predecessor
-        else {
-          predecessor.left = null;
-          current = current.left;
-        } // End of if condition predecessor->left == NULL
-      } // End of if condition current->right == NULL
-    } // End of while
-
-    return keys;
   }
 
   /*************************************************************************
@@ -635,7 +562,7 @@ public class BST<Key extends Comparable<Key>, Value> {
       StdOut.println("order: " + order);
       StdOut.println("\tMorrisTraversal:");
       StdOut.print("\t");
-      for (String s : st.traverse(order)) StdOut.print(s + "=>" + st.get(s) + " ");
+      for (String s : st.keys(order)) StdOut.print(s + "=>" + st.get(s) + " ");
       StdOut.println();
 
       StdOut.println("\tNonRecursiveTraversal:");

@@ -24,7 +24,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.symboltable.bst;
+package com.inflaton.datastructures.symboltable.trie;
 
 import com.inflaton.datastructures.collection.queue.Queue;
 import edu.princeton.cs.algs4.StdOut;
