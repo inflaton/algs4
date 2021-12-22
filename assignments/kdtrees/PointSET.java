@@ -89,7 +89,7 @@ public class PointSET {
     if (args.length > 1) {
       processRangeSearchQueries(brute);
     } else {
-      processNearestNeighorQueries(brute);
+      processNearestNeighborQueries(brute);
     }
   }
 
@@ -151,7 +151,7 @@ public class PointSET {
     }
   }
 
-  private static void processNearestNeighorQueries(PointSET brute) {
+  private static void processNearestNeighborQueries(PointSET brute) {
     // process nearest neighbor queries
     StdDraw.enableDoubleBuffering();
     while (true) {

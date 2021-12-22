@@ -169,60 +169,52 @@ public class KdTree {
     if (node == null) {
       return closetPoint;
     }
-    Point2D p = node.point;
+
     double shortestDistanceSquared = searchPoint.distanceSquaredTo(closetPoint);
-    double distanceSquared = searchPoint.distanceSquaredTo(p);
-    if (distanceSquared < shortestDistanceSquared) {
-      closetPoint = p;
-      shortestDistanceSquared = distanceSquared;
+    if (shortestDistanceSquared < distanceSquaredToRect(searchPoint, nodeRect)) {
+      return closetPoint;
     }
 
-    if (shortestDistanceSquared < distanceSquaredToRect(searchPoint, nodeRect)) {
-      double[] childDistancesSquared = new double[2];
-      Node[] childNodes = {node.left, node.right};
-      RectHV[] childRects = getChildRects(node, nodeRect);
-      double min = Double.POSITIVE_INFINITY;
-      int index = 0;
-      for (int i = 0; i < childNodes.length; i++) {
-        childDistancesSquared[i] = distanceSquaredToRect(searchPoint, childRects[i]);
-        if (min > childDistancesSquared[i]) {
-          index = i;
-          min = childDistancesSquared[i];
-        }
-      }
-      for (int i = 0; i < 2; i++) {
-        if (childDistancesSquared[i] < shortestDistanceSquared) {
-          closetPoint = nearest(childNodes[index], childRects[index], searchPoint, closetPoint);
-          shortestDistanceSquared = searchPoint.distanceSquaredTo(closetPoint);
-        }
-        index = 1 - index;
+    Point2D p = node.point;
+    double distanceSquared = searchPoint.distanceSquaredTo(p);
+    if (shortestDistanceSquared > distanceSquared) {
+      closetPoint = p;
+    }
+
+    Node[] childNodes = {node.left, node.right};
+    RectHV[] childRects = getChildRects(node, nodeRect);
+    double min = Double.POSITIVE_INFINITY;
+    int index = 0;
+    for (int i = 0; i < childNodes.length; i++) {
+      double childDistanceSquared = distanceSquaredToRect(searchPoint, childRects[i]);
+      if (min > childDistanceSquared) {
+        index = i;
+        min = childDistanceSquared;
       }
     }
+
+    for (int i = 0; i < 2; i++) {
+      closetPoint = nearest(childNodes[index], childRects[index], searchPoint, closetPoint);
+      index = 1 - index;
+    }
+
     return closetPoint;
   }
 
-  private double distanceSquaredToRect(Point2D point, RectHV rect) {
-    if (rect.contains(point)) {
+  private double distanceSquaredToRect(Point2D p, RectHV r) {
+    if (r.contains(p)) {
       return 0;
     }
 
-    double dxSquared;
-    if (point.x() < rect.xmin()) {
-      dxSquared = (point.x() - rect.xmin()) * (point.x() - rect.xmin());
-    } else {
-      dxSquared = (point.x() - rect.xmax()) * (point.x() - rect.xmax());
-    }
-    if (point.y() > rect.ymin() && point.y() < rect.ymax()) {
+    double dxSquared =
+        Math.min((p.x() - r.xmin()) * (p.x() - r.xmin()), (p.x() - r.xmax()) * (p.x() - r.xmax()));
+    if (p.y() > r.ymin() && p.y() < r.ymax()) {
       return dxSquared;
     }
 
-    double dySquared;
-    if (point.y() < rect.ymin()) {
-      dySquared = (point.y() - rect.ymin()) * (point.y() - rect.ymin());
-    } else {
-      dySquared = (point.y() - rect.ymax()) * (point.y() - rect.ymax());
-    }
-    if (point.x() < rect.xmin() && point.x() < rect.xmax()) {
+    double dySquared =
+        Math.min((p.y() - r.ymin()) * (p.y() - r.ymin()), (p.y() - r.ymax()) * (p.y() - r.ymax()));
+    if (p.x() > r.xmin() && p.x() < r.xmax()) {
       return dySquared;
     }
 
@@ -234,21 +226,23 @@ public class KdTree {
     String filename = args[0];
     In in = new In(filename);
     KdTree kdtree = new KdTree();
+    PointSET brute = new PointSET();
 
     while (!in.isEmpty()) {
       double x = in.readDouble();
       double y = in.readDouble();
       Point2D p = new Point2D(x, y);
       kdtree.insert(p);
+      brute.insert(p);
     }
     if (args.length > 1) {
-      processRangeSearchQueries(kdtree);
+      processRangeSearchQueries(kdtree, brute);
     } else {
-      processNearestNeighorQueries(kdtree);
+      processNearestNeighborQueries(kdtree, brute);
     }
   }
 
-  private static void processRangeSearchQueries(KdTree kdtree) {
+  private static void processRangeSearchQueries(KdTree kdtree, PointSET brute) {
     double x0 = 0.0;
     double y0 = 0.0; // initial endpoint of rectangle
     double x1 = 0.0;
@@ -259,7 +253,7 @@ public class KdTree {
     StdDraw.clear();
     StdDraw.setPenColor(StdDraw.BLACK);
     StdDraw.setPenRadius(0.01);
-    kdtree.draw();
+    brute.draw();
     StdDraw.show();
 
     // process range search queries
@@ -285,7 +279,7 @@ public class KdTree {
       StdDraw.clear();
       StdDraw.setPenColor(StdDraw.BLACK);
       StdDraw.setPenRadius(0.01);
-      kdtree.draw();
+      brute.draw();
 
       // draw the rectangle
       RectHV rect =
@@ -306,7 +300,7 @@ public class KdTree {
     }
   }
 
-  private static void processNearestNeighorQueries(KdTree kdtree) {
+  private static void processNearestNeighborQueries(KdTree kdtree, PointSET brute) {
     // process nearest neighbor queries
     StdDraw.enableDoubleBuffering();
     while (true) {
@@ -315,7 +309,7 @@ public class KdTree {
       StdDraw.clear();
       StdDraw.setPenColor(StdDraw.BLACK);
       StdDraw.setPenRadius(0.01);
-      kdtree.draw();
+      brute.draw();
 
       StdDraw.setPenRadius(0.03);
       StdDraw.setPenColor(StdDraw.RED);
