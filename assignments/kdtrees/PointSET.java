@@ -1,4 +1,9 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.StdDraw;
 
 public class PointSET {
   private SET<Point2D> point2DSET;
@@ -57,16 +62,16 @@ public class PointSET {
 
   // a nearest neighbor in the set to point p; null if the set is empty
   public Point2D nearest(Point2D p) {
-    Point2D pointFound = null;
+    Point2D nearest = null;
     double minDistanceSquared = Double.POSITIVE_INFINITY;
     for (Point2D point2D : point2DSET) {
       double distanceSquared = p.distanceSquaredTo(point2D);
       if (minDistanceSquared > distanceSquared) {
         minDistanceSquared = distanceSquared;
-        pointFound = point2D;
+        nearest = point2D;
       }
     }
-    return pointFound;
+    return nearest;
   }
 
   // unit testing of the methods (optional)
