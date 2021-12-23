@@ -3,10 +3,11 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
+  private static final RectHV ROOT_RECT = new RectHV(0, 0, 1, 1);
   private Node root; // root of BST
-  private static final RectHV rootRect = new RectHV(0, 0, 1, 1);
 
   private static class Node {
     private final Point2D point; // sorted by key
@@ -21,9 +22,6 @@ public class KdTree {
       this.size = size;
     }
   }
-
-  // construct an empty set of points
-  public KdTree() {}
 
   // is the set empty?
   public boolean isEmpty() {
@@ -56,13 +54,15 @@ public class KdTree {
     if (node == null) {
       return new Node(p, verticalSplit, 1);
     }
-    int cmp = compare(p, node.point, node.verticalSplit);
-    if (cmp < 0) {
-      node.left = insert(node.left, p, !verticalSplit);
-    } else {
-      node.right = insert(node.right, p, !verticalSplit);
+    if (!node.point.equals(p)) {
+      int cmp = compare(p, node.point, node.verticalSplit);
+      if (cmp < 0) {
+        node.left = insert(node.left, p, !verticalSplit);
+      } else {
+        node.right = insert(node.right, p, !verticalSplit);
+      }
+      node.size = 1 + size(node.left) + size(node.right);
     }
-    node.size = 1 + size(node.left) + size(node.right);
     return node;
   }
 
@@ -125,7 +125,7 @@ public class KdTree {
       throw new IllegalArgumentException();
     }
     Queue<Point2D> result = new Queue<>();
-    range(root, rootRect, rect, result);
+    range(root, ROOT_RECT, rect, result);
     return result;
   }
 
@@ -162,7 +162,10 @@ public class KdTree {
 
   // a nearest neighbor in the set to point p; null if the set is empty
   public Point2D nearest(Point2D p) {
-    return nearest(root, rootRect, p, new Point2D(-1, -1));
+    if (p == null) {
+      throw new IllegalArgumentException();
+    }
+    return nearest(root, ROOT_RECT, p, null);
   }
 
   private Point2D nearest(Node node, RectHV nodeRect, Point2D searchPoint, Point2D closetPoint) {
@@ -170,15 +173,17 @@ public class KdTree {
       return closetPoint;
     }
 
-    double shortestDistanceSquared = searchPoint.distanceSquaredTo(closetPoint);
-    if (shortestDistanceSquared < distanceSquaredToRect(searchPoint, nodeRect)) {
-      return closetPoint;
-    }
-
     Point2D p = node.point;
-    double distanceSquared = searchPoint.distanceSquaredTo(p);
-    if (shortestDistanceSquared > distanceSquared) {
+    if (closetPoint == null) {
       closetPoint = p;
+    } else {
+      double shortestDistanceSquared = searchPoint.distanceSquaredTo(closetPoint);
+      if (shortestDistanceSquared < distanceSquaredToRect(searchPoint, nodeRect)) {
+        return closetPoint;
+      }
+      if (shortestDistanceSquared > searchPoint.distanceSquaredTo(p)) {
+        closetPoint = p;
+      }
     }
 
     Node[] childNodes = {node.left, node.right};
@@ -235,93 +240,15 @@ public class KdTree {
       kdtree.insert(p);
       brute.insert(p);
     }
-    if (args.length > 1) {
-      processRangeSearchQueries(kdtree, brute);
-    } else {
-      processNearestNeighborQueries(kdtree, brute);
-    }
-  }
-
-  private static void processRangeSearchQueries(KdTree kdtree, PointSET brute) {
-    double x0 = 0.0;
-    double y0 = 0.0; // initial endpoint of rectangle
-    double x1 = 0.0;
-    double y1 = 0.0; // current location of mouse
-    boolean isDragging = false; // is the user dragging a rectangle
 
     // draw the points
     StdDraw.clear();
-    StdDraw.setPenColor(StdDraw.BLACK);
-    StdDraw.setPenRadius(0.01);
+    kdtree.draw();
+    StdDraw.setPenRadius();
     brute.draw();
     StdDraw.show();
 
-    // process range search queries
-    StdDraw.enableDoubleBuffering();
-
-    while (true) {
-
-      // user starts to drag a rectangle
-      if (StdDraw.isMousePressed() && !isDragging) {
-        x1 = StdDraw.mouseX();
-        y1 = StdDraw.mouseY();
-        x0 = x1;
-        y0 = y1;
-        isDragging = true;
-      } else if (StdDraw.isMousePressed()) {
-        x1 = StdDraw.mouseX();
-        y1 = StdDraw.mouseY();
-      } else if (isDragging) {
-        isDragging = false;
-      }
-
-      // draw the points
-      StdDraw.clear();
-      StdDraw.setPenColor(StdDraw.BLACK);
-      StdDraw.setPenRadius(0.01);
-      brute.draw();
-
-      // draw the rectangle
-      RectHV rect =
-          new RectHV(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1));
-      StdDraw.setPenColor(StdDraw.BLACK);
-      StdDraw.setPenRadius();
-      rect.draw();
-
-      // draw the range search results for kdtree-force data structure in red
-      StdDraw.setPenRadius(0.03);
-      StdDraw.setPenColor(StdDraw.RED);
-      for (Point2D p : kdtree.range(rect)) {
-        p.draw();
-      }
-
-      StdDraw.show();
-      StdDraw.pause(20);
-    }
-  }
-
-  private static void processNearestNeighborQueries(KdTree kdtree, PointSET brute) {
-    // process nearest neighbor queries
-    StdDraw.enableDoubleBuffering();
-    while (true) {
-
-      // draw all of the points
-      StdDraw.clear();
-      StdDraw.setPenColor(StdDraw.BLACK);
-      StdDraw.setPenRadius(0.01);
-      brute.draw();
-
-      StdDraw.setPenRadius(0.03);
-      StdDraw.setPenColor(StdDraw.RED);
-
-      // the location (x, y) of the mouse
-      double x = StdDraw.mouseX();
-      double y = StdDraw.mouseY();
-      Point2D query = new Point2D(x, y);
-      kdtree.nearest(query).draw();
-
-      StdDraw.show();
-      StdDraw.pause(40);
-    }
+    Point2D p = new Point2D(0.249, 0.452);
+    StdOut.println("nearest: " + kdtree.nearest(p));
   }
 }
