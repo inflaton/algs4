@@ -63,25 +63,22 @@ public class WordNet {
   // The WordNet digraph is a rooted DAG: it is acyclic and has one vertex—the root—that is an
   // ancestor of every other vertex.
   private void validate(Digraph digraph) {
-    int root = -1;
+    int rootNumber = 0;
     for (int v = 0; v < digraph.V(); v++) {
       if (digraph.outdegree(v) == 0) {
-        root = v;
-        break;
+        rootNumber++;
       }
     }
-    if (root < 0) {
-      throw new IllegalArgumentException("no root found");
+    if (rootNumber != 1) {
+      throw new IllegalArgumentException(
+          rootNumber == 0 ? "no root found" : rootNumber + " roots found");
     }
 
-    digraph = digraph.reverse();
     boolean[] marked = new boolean[digraph.V()];
     boolean[] onStack = new boolean[digraph.V()];
-    dfs(digraph, root, marked, onStack);
-
-    for (boolean m : marked) {
-      if (!m) {
-        throw new IllegalArgumentException("more than one roots found");
+    for (int i = 0; i < marked.length; i++) {
+      if (!marked[i]) {
+        dfs(digraph, i, marked, onStack);
       }
     }
   }
