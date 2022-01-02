@@ -63,7 +63,7 @@ public class BreadthFirstDirectedPaths {
    * @param s the source vertex
    * @throws IllegalArgumentException unless {@code 0 <= v < V}
    */
-  public BreadthFirstDirectedPaths(com.inflaton.datastructures.graph.digraph.Digraph G, int s) {
+  public BreadthFirstDirectedPaths(Digraph G, int s) {
     marked = new boolean[G.V()];
     distTo = new int[G.V()];
     edgeTo = new int[G.V()];
@@ -82,8 +82,7 @@ public class BreadthFirstDirectedPaths {
    * @throws IllegalArgumentException unless each vertex {@code v} in {@code sources} satisfies
    *     {@code 0 <= v < V}
    */
-  public BreadthFirstDirectedPaths(
-      com.inflaton.datastructures.graph.digraph.Digraph G, Iterable<Integer> sources) {
+  public BreadthFirstDirectedPaths(Digraph G, Iterable<Integer> sources) {
     marked = new boolean[G.V()];
     distTo = new int[G.V()];
     edgeTo = new int[G.V()];
@@ -93,7 +92,7 @@ public class BreadthFirstDirectedPaths {
   }
 
   // BFS from single source
-  private void bfs(com.inflaton.datastructures.graph.digraph.Digraph G, int s) {
+  private void bfs(Digraph G, int s) {
     Queue<Integer> q = new Queue<Integer>();
     marked[s] = true;
     distTo[s] = 0;
@@ -112,7 +111,7 @@ public class BreadthFirstDirectedPaths {
   }
 
   // BFS from multiple sources
-  private void bfs(com.inflaton.datastructures.graph.digraph.Digraph G, Iterable<Integer> sources) {
+  private void bfs(Digraph G, Iterable<Integer> sources) {
     Queue<Integer> q = new Queue<Integer>();
     for (int s : sources) {
       marked[s] = true;
@@ -211,7 +210,7 @@ public class BreadthFirstDirectedPaths {
    */
   public static void main(String[] args) {
     In in = new In(args[0]);
-    com.inflaton.datastructures.graph.digraph.Digraph G = new Digraph(in);
+    Digraph G = new Digraph(in);
     // StdOut.println(G);
 
     int s = Integer.parseInt(args[1]);
