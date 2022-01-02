@@ -4,15 +4,18 @@ import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class SAP {
 
-  private Digraph digraph;
+  private final Digraph digraph;
 
   // constructor takes a digraph (not necessarily a DAG)
   public SAP(Digraph digraph) {
-    this.digraph = digraph;
+    if (digraph == null) {
+      throw new IllegalArgumentException();
+    }
+    this.digraph = new Digraph(digraph);
   }
 
   // length of shortest ancestral path between v and w; -1 if no such path
@@ -31,9 +34,8 @@ public class SAP {
   private int[] findShortestAncestralPath(int v, int w) {
     validateVertex(v);
     validateVertex(w);
-    Integer[] array1 = {v};
-    Integer[] array2 = {w};
-    return findShortestAncestralPath(Arrays.asList(array1), Arrays.asList(array2));
+
+    return findShortestAncestralPath(Collections.singletonList(v), Collections.singletonList(w));
   }
 
   private int[] findShortestAncestralPath(Iterable<Integer> v, Iterable<Integer> w) {
@@ -74,24 +76,17 @@ public class SAP {
   }
 
   // throw an IllegalArgumentException unless {@code 0 <= v < V}
-  private void validateVertex(int v) {
-    if (v < 0 || v >= digraph.V()) {
+  private void validateVertex(Integer v) {
+    if (v == null || v < 0 || v >= digraph.V()) {
       throw new IllegalArgumentException(
           "vertex " + v + " is not between 0 and " + (digraph.V() - 1));
     }
   }
 
-  private void bfs(int s, boolean[] marked, int[] distTo, int[] edgeTo) {
-    validateVertex(s);
-    Queue<Integer> q = new Queue<Integer>();
-    q.enqueue(s);
-    bfs(q, marked, distTo, edgeTo);
-  }
-
   // BFS from multiple sources
   private void bfs(Iterable<Integer> sources, boolean[] marked, int[] distTo, int[] edgeTo) {
     Queue<Integer> q = new Queue<Integer>();
-    for (int s : sources) {
+    for (Integer s : sources) {
       validateVertex(s);
 
       marked[s] = true;

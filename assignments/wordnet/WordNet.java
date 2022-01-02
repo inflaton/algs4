@@ -10,10 +10,9 @@ import java.util.Set;
 
 public class WordNet {
 
-  private HashMap<String, Set<Integer>> nounToIdMapping;
-  private ArrayList<String> synsetList;
-  private SAP sap;
-  private int nounCount;
+  private final HashMap<String, Set<Integer>> nounToIdMapping;
+  private final ArrayList<String> synsetList;
+  private final SAP sap;
 
   // constructor takes the name of the two input files
   public WordNet(String synsets, String hypernyms) {
@@ -35,7 +34,6 @@ public class WordNet {
         Set<Integer> ids = nounToIdMapping.get(noun);
         if (ids == null) {
           ids = new HashSet<>();
-          nounCount++;
         }
         ids.add(id);
         nounToIdMapping.put(noun, ids);
@@ -58,7 +56,48 @@ public class WordNet {
       }
     }
 
+    validate(digraph);
     sap = new SAP(digraph);
+  }
+
+  // The WordNet digraph is a rooted DAG: it is acyclic and has one vertex—the root—that is an
+  // ancestor of every other vertex.
+  private void validate(Digraph digraph) {
+    int root = -1;
+    for (int v = 0; v < digraph.V(); v++) {
+      if (digraph.outdegree(v) == 0) {
+        root = v;
+        break;
+      }
+    }
+    if (root < 0) {
+      throw new IllegalArgumentException("no root found");
+    }
+
+    digraph = digraph.reverse();
+    boolean[] marked = new boolean[digraph.V()];
+    boolean[] onStack = new boolean[digraph.V()];
+    dfs(digraph, root, marked, onStack);
+
+    for (boolean m : marked) {
+      if (!m) {
+        throw new IllegalArgumentException("more than one roots found");
+      }
+    }
+  }
+
+  private void dfs(Digraph digraph, int v, boolean[] marked, boolean[] onStack) {
+    onStack[v] = true;
+    marked[v] = true;
+
+    for (int w : digraph.adj(v)) {
+      if (!marked[w]) {
+        dfs(digraph, w, marked, onStack);
+      } else if (onStack[w]) {
+        throw new IllegalArgumentException("cycle found");
+      }
+    }
+    onStack[v] = false;
   }
 
   // returns all WordNet nouns
