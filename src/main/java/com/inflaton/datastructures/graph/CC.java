@@ -32,6 +32,8 @@
 package com.inflaton.datastructures.graph;
 
 import com.inflaton.datastructures.collection.queue.Queue;
+import com.inflaton.datastructures.graph.edgeweightedgraph.Edge;
+import com.inflaton.datastructures.graph.edgeweightedgraph.EdgeWeightedGraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 

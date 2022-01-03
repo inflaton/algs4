@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph;
+package com.inflaton.datastructures.graph.edgeweightedgraph;
 
 import edu.princeton.cs.algs4.StdOut;
 

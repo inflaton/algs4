@@ -22,7 +22,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph;
+package com.inflaton.datastructures.graph.edgeweightedgraph;
 
 import com.inflaton.datastructures.collection.bag.Bag;
 import com.inflaton.datastructures.collection.stack.Stack;
