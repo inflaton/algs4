@@ -29,11 +29,10 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph;
+package com.inflaton.datastructures.graph.edgeweightedgraph;
 
 import com.inflaton.datastructures.collection.queue.Queue;
-import com.inflaton.datastructures.graph.edgeweightedgraph.Edge;
-import com.inflaton.datastructures.graph.edgeweightedgraph.EdgeWeightedGraph;
+import com.inflaton.datastructures.graph.Graph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -169,24 +168,6 @@ public class CC {
    * @throws IllegalArgumentException unless {@code 0 <= w < V}
    */
   public boolean connected(int v, int w) {
-    validateVertex(v);
-    validateVertex(w);
-    return id(v) == id(w);
-  }
-
-  /**
-   * Returns true if vertices {@code v} and {@code w} are in the same connected component.
-   *
-   * @param v one vertex
-   * @param w the other vertex
-   * @return {@code true} if vertices {@code v} and {@code w} are in the same connected component;
-   *     {@code false} otherwise
-   * @throws IllegalArgumentException unless {@code 0 <= v < V}
-   * @throws IllegalArgumentException unless {@code 0 <= w < V}
-   * @deprecated Replaced by {@link #connected(int, int)}.
-   */
-  @Deprecated
-  public boolean areConnected(int v, int w) {
     validateVertex(v);
     validateVertex(w);
     return id(v) == id(w);
