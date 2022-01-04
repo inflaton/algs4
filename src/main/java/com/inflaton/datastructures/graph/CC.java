@@ -29,7 +29,11 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph.edgeweightedgraph;
+package com.inflaton.datastructures.graph;
+
+import com.inflaton.datastructures.collection.queue.Queue;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 
 /**
  * The {@code CC} class represents a data type for determining the connected components in an
@@ -61,11 +65,11 @@ public class CC {
   private int count; // number of connected components
 
   /**
-   * Computes the connected components of the edge-weighted graph {@code G}.
+   * Computes the connected components of the undirected graph {@code G}.
    *
-   * @param G the edge-weighted graph
+   * @param G the undirected graph
    */
-  public CC(EdgeWeightedGraph G) {
+  public CC(Graph G) {
     marked = new boolean[G.V()];
     id = new int[G.V()];
     size = new int[G.V()];
@@ -77,13 +81,12 @@ public class CC {
     }
   }
 
-  // depth-first search for an EdgeWeightedGraph
-  private void dfs(EdgeWeightedGraph G, int v) {
+  // depth-first search for a Graph
+  private void dfs(Graph G, int v) {
     marked[v] = true;
     id[v] = count;
     size[count]++;
-    for (Edge e : G.adj(v)) {
-      int w = e.other(v);
+    for (int w : G.adj(v)) {
       if (!marked[w]) {
         dfs(G, w);
       }
@@ -144,6 +147,38 @@ public class CC {
     int V = marked.length;
     if (v < 0 || v >= V)
       throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V - 1));
+  }
+
+  /**
+   * Unit tests the {@code CC} data type.
+   *
+   * @param args the command-line arguments
+   */
+  public static void main(String[] args) {
+    In in = new In(args[0]);
+    Graph G = new Graph(in);
+    CC cc = new CC(G);
+
+    // number of connected components
+    int m = cc.count();
+    StdOut.println(m + " components");
+
+    // compute list of vertices in each connected component
+    Queue<Integer>[] components = (Queue<Integer>[]) new Queue[m];
+    for (int i = 0; i < m; i++) {
+      components[i] = new Queue<Integer>();
+    }
+    for (int v = 0; v < G.V(); v++) {
+      components[cc.id(v)].enqueue(v);
+    }
+
+    // print results
+    for (int i = 0; i < m; i++) {
+      for (int v : components[i]) {
+        StdOut.print(v + " ");
+      }
+      StdOut.println();
+    }
   }
 }
 

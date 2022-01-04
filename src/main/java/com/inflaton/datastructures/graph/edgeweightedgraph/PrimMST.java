@@ -88,8 +88,9 @@ public class PrimMST {
     pq = new IndexMinPQ<Double>(G.V());
     for (int v = 0; v < G.V(); v++) distTo[v] = Double.POSITIVE_INFINITY;
 
-    for (int v = 0; v < G.V(); v++) // run from each vertex to find
-    if (!marked[v]) prim(G, v); // minimum spanning forest
+    for (int v = 0; v < G.V(); v++) { // run from each vertex to find
+      if (!marked[v]) prim(G, v); // minimum spanning forest
+    }
 
     // check optimality conditions
     assert check(G);
