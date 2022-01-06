@@ -93,7 +93,7 @@ public class KruskalMST extends AbstractMST {
       // v-w does not create a cycle
       if (uf.find(v) != uf.find(w)) {
         uf.union(v, w); // merge v and w components
-        mst.enqueue(e); // add edge e to mst
+        mst.add(e); // add edge e to mst
         weight += e.weight();
       }
     }

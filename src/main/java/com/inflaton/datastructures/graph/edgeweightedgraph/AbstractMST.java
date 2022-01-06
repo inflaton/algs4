@@ -1,13 +1,13 @@
 package com.inflaton.datastructures.graph.edgeweightedgraph;
 
-import com.inflaton.datastructures.collection.queue.Queue;
+import com.inflaton.datastructures.collection.bag.Bag;
 import com.inflaton.datastructures.unionfind.UF;
 
 public abstract class AbstractMST {
 
   private static final double FLOATING_POINT_EPSILON = 1E-12;
 
-  protected final Queue<Edge> mst = new Queue<Edge>(); // edges in MST
+  protected final Bag<Edge> mst = new Bag<Edge>(); // edges in MST
   protected double weight; // weight of MST
 
   public Iterable<Edge> edges() {
