@@ -65,8 +65,10 @@ public class BoruvkaMST extends AbstractMST {
     // repeat at most log V times or until we have V-1 edges
     for (int t = 1; t < G.V() && mst.size() < G.V() - 1; t = t + t) {
 
-      // foreach tree in forest, find closest edge
-      // if edge weights are equal, ties are broken in favor of first edge in G.edges()
+      /*
+       foreach tree in forest, find the closest edge
+       if edge weights are equal, ties are broken in favor of first edge in G.edges()
+      */
       Edge[] closest = new Edge[G.V()];
       for (Edge e : G.edges()) {
         int v = e.either(), w = e.other(v);
@@ -83,7 +85,7 @@ public class BoruvkaMST extends AbstractMST {
           int v = e.either(), w = e.other(v);
           // don't add the same edge twice
           if (uf.find(v) != uf.find(w)) {
-            mst.add(e);
+            mst.enqueue(e);
             weight += e.weight();
             uf.union(v, w);
           }

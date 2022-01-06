@@ -95,7 +95,7 @@ public class LazyPrimMST extends AbstractMST {
       int v = e.either(), w = e.other(v); // two endpoints
       assert marked[v] || marked[w];
       if (marked[v] && marked[w]) continue; // lazy, both v and w already scanned
-      mst.add(e); // add e to MST
+      mst.enqueue(e); // add e to MST
       weight += e.weight();
       if (!marked[v]) scan(G, v); // v becomes part of tree
       if (!marked[w]) scan(G, w); // w becomes part of tree
