@@ -38,6 +38,7 @@
 
 package com.inflaton.datastructures.graph.edgeweightedgraph;
 
+import com.inflaton.datastructures.collection.queue.Queue;
 import com.inflaton.datastructures.priorityqueue.IndexMinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
@@ -88,12 +89,6 @@ public class PrimMST extends AbstractMST {
       if (!marked[v]) prim(G, v); // minimum spanning forest
     }
 
-    for (Edge e : edgeTo) {
-      if (e != null) {
-        mst.enqueue(e);
-      }
-    }
-
     // check optimality conditions
     assert check(G);
   }
@@ -121,6 +116,21 @@ public class PrimMST extends AbstractMST {
         else pq.insert(w, distTo[w]);
       }
     }
+  }
+
+  /**
+   * Returns the edges in a minimum spanning tree (or forest).
+   *
+   * @return the edges in a minimum spanning tree (or forest) as an iterable of edges
+   */
+  public Iterable<Edge> edges() {
+    Queue<Edge> mst = new Queue<Edge>();
+    for (Edge e : edgeTo) {
+      if (e != null) {
+        mst.enqueue(e);
+      }
+    }
+    return mst;
   }
 
   /**
