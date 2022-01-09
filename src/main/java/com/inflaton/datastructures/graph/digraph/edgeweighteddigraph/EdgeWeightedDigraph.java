@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph.digraph;
+package com.inflaton.datastructures.graph.digraph.edgeweighteddigraph;
 
 import com.inflaton.datastructures.collection.bag.Bag;
 import com.inflaton.datastructures.collection.stack.Stack;

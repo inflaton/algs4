@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-package com.inflaton.datastructures.graph.digraph;
+package com.inflaton.datastructures.graph.digraph.edgeweighteddigraph;
 
 import edu.princeton.cs.algs4.StdOut;
 
