@@ -1,8 +1,26 @@
 import edu.princeton.cs.algs4.Picture;
 
-public class SeamCarver implements ISeamPicture {
+public class SeamCarver {
 
   private Picture picture;
+
+  private ISeamPicture seamPicture =
+      new ISeamPicture() {
+        @Override
+        public int width() {
+          return SeamCarver.this.width();
+        }
+
+        @Override
+        public int height() {
+          return SeamCarver.this.height();
+        }
+
+        @Override
+        public double energy(int x, int y) {
+          return SeamCarver.this.energy(x, y);
+        }
+      };
 
   // create a seam carver object based on the given picture
   public SeamCarver(Picture picture) {
@@ -76,13 +94,13 @@ public class SeamCarver implements ISeamPicture {
 
   // sequence of indices for horizontal seam
   public int[] findHorizontalSeam() {
-    HorizontalSeam horizontalSeam = new HorizontalSeam(this);
+    HorizontalSeam horizontalSeam = new HorizontalSeam(seamPicture);
     return horizontalSeam.seam();
   }
 
   // sequence of indices for vertical seam
   public int[] findVerticalSeam() {
-    VerticalSeam verticalSeam = new VerticalSeam(this);
+    VerticalSeam verticalSeam = new VerticalSeam(seamPicture);
     return verticalSeam.seam();
   }
 
