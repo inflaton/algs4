@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
 
-  private final Picture picture;
+  private Picture picture;
 
   // create a seam carver object based on the given picture
   public SeamCarver(Picture picture) {
@@ -76,8 +76,8 @@ public class SeamCarver {
 
   // sequence of indices for horizontal seam
   public int[] findHorizontalSeam() {
-    int[] seam = new int[this.width()];
-    return seam;
+    HorizontalSeam horizontalSeam = new HorizontalSeam(this);
+    return horizontalSeam.seam();
   }
 
   // sequence of indices for vertical seam
@@ -87,11 +87,46 @@ public class SeamCarver {
   }
 
   // remove horizontal seam from current picture
-  public void removeHorizontalSeam(int[] seam) {}
+  public void removeHorizontalSeam(int[] seam) {
+    if (seam == null || seam.length != width() || width() <= 1) {
+      throw new IllegalArgumentException();
+    }
+
+    Picture newPic = new Picture(width(), height() - 1);
+    for (int x = 0; x < width(); x++) {
+      if (seam[x] < 0 || seam[x] > height() - 1 || x > 0 && Math.abs(seam[x] - seam[x - 1]) > 1) {
+        throw new IllegalArgumentException();
+      }
+      for (int y = 0; y < height(); y++) {
+        if (seam[x] != y) {
+          int newY = y > seam[x] ? y - 1 : y;
+          newPic.setRGB(x, newY, this.picture.getRGB(x, y));
+        }
+      }
+    }
+
+    this.picture = newPic;
+  }
 
   // remove vertical seam from current picture
-  public void removeVerticalSeam(int[] seam) {}
+  public void removeVerticalSeam(int[] seam) {
+    if (seam == null || seam.length != height() || height() <= 1) {
+      throw new IllegalArgumentException();
+    }
 
-  //  unit testing (optional)
-  public static void main(String[] args) {}
+    Picture newPic = new Picture(width() - 1, height());
+    for (int y = 0; y < height(); y++) {
+      if (seam[y] < 0 || seam[y] > width() - 1 || y > 0 && Math.abs(seam[y] - seam[y - 1]) > 1) {
+        throw new IllegalArgumentException();
+      }
+      for (int x = 0; x < width(); x++) {
+        if (seam[y] != x) {
+          int newX = x > seam[y] ? x - 1 : x;
+          newPic.setRGB(newX, y, this.picture.getRGB(x, y));
+        }
+      }
+    }
+
+    this.picture = newPic;
+  }
 }

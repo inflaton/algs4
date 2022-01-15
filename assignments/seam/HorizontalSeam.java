@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
-public class VerticalSeam extends AbstractSeam {
+public class HorizontalSeam extends AbstractSeam {
 
-  public VerticalSeam(SeamCarver sc) {
+  public HorizontalSeam(SeamCarver sc) {
     super(sc);
   }
 
@@ -11,21 +11,21 @@ public class VerticalSeam extends AbstractSeam {
     ArrayList<Integer> arrayList = new ArrayList<>();
     if (v < numOfVertices - 1) {
       if (v == 0) { // virtual start vertex
-        for (int x = 0; x < sc.width(); x++) {
-          arrayList.add(vertexOf(x, 0));
+        for (int y = 0; y < sc.height(); y++) {
+          arrayList.add(vertexOf(0, y));
         }
       } else {
         int x = (v - 1) % sc.width();
         int y = (v - 1) / sc.width();
 
-        if (y == sc.height() - 1) { // last row
+        if (x == sc.width() - 1) { // last column
           arrayList.add(numOfVertices - 1);
         } else {
-          if (x > 0) {
-            arrayList.add(vertexOf(x - 1, y + 1));
+          if (y > 0) {
+            arrayList.add(vertexOf(x + 1, y - 1));
           }
-          arrayList.add(vertexOf(x, y + 1));
-          if (x < sc.width() - 1) {
+          arrayList.add(vertexOf(x + 1, y));
+          if (y < sc.height() - 1) {
             arrayList.add(vertexOf(x + 1, y + 1));
           }
         }
@@ -37,11 +37,11 @@ public class VerticalSeam extends AbstractSeam {
 
   @Override
   protected int seamLength() {
-    return sc.height();
+    return sc.width();
   }
 
   @Override
   protected void setSeamValue(int[] seam, int x, int y) {
-    seam[y] = x;
+    seam[x] = y;
   }
 }
