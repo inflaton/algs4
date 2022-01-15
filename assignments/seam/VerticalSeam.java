@@ -32,7 +32,7 @@ public class VerticalSeam {
 
     while (!pq.isEmpty()) {
       int v = pq.delMin();
-      ArrayList<Integer> adjVertices = getAdjVertices(v);
+      ArrayList<Integer> adjVertices = adjVertices(v);
       for (int w : adjVertices) {
         relax(v, w);
       }
@@ -40,19 +40,22 @@ public class VerticalSeam {
   }
 
   private void relax(int v, int w) {
-    if (distTo[w] > distTo[v] + weight(w)) {
-      distTo[w] = distTo[v] + weight(w);
+    double weight = weight(w);
+    if (distTo[w] > distTo[v] + weight) {
+      distTo[w] = distTo[v] + weight;
       edgeTo[w] = v;
-      if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
-      else pq.insert(w, distTo[w]);
+      if (pq.contains(w)) {
+        pq.decreaseKey(w, distTo[w]);
+      } else {
+        pq.insert(w, distTo[w]);
+      }
     }
   }
 
-  public int[] getSeam() {
+  public int[] seam() {
     int[] seam = new int[sc.height()];
     int v = numOfVertices - 1;
-    while (v > 0) {
-      v = edgeTo[v];
+    while ((v = edgeTo[v]) > 0) {
       int x = (v - 1) % sc.width();
       int y = (v - 1) / sc.width();
       seam[y] = x;
@@ -61,28 +64,36 @@ public class VerticalSeam {
   }
 
   private double weight(int v) {
+    if (v == numOfVertices - 1) {
+      return 0;
+    }
     int x = (v - 1) % sc.width();
     int y = (v - 1) / sc.width();
     return sc.energy(x, y);
   }
 
-  private ArrayList<Integer> getAdjVertices(int v) {
+  private ArrayList<Integer> adjVertices(int v) {
     ArrayList<Integer> arrayList = new ArrayList<>();
-    if (v == 0) { // virtual start vertex
-      for (int i = 0; i < sc.width(); i++) {
-        arrayList.add(i + 1);
-      }
-    } else if (v >= numOfVertices - 1 - sc.width() && v < numOfVertices - 1) { // last row
-      arrayList.add(numOfVertices - 1);
-    } else {
-      int x = (v - 1) % sc.width();
-      int y = (v - 1) / sc.width();
-      if (x > 0) {
-        arrayList.add(vertexOf(x - 1, y + 1));
-      }
-      arrayList.add(vertexOf(x, y + 1));
-      if (x < sc.width() - 1) {
-        arrayList.add(vertexOf(x + 1, y + 1));
+    if (v < numOfVertices - 1) {
+      if (v == 0) { // virtual start vertex
+        for (int i = 0; i < sc.width(); i++) {
+          arrayList.add(i + 1);
+        }
+      } else {
+        int x = (v - 1) % sc.width();
+        int y = (v - 1) / sc.width();
+
+        if (y == sc.height() - 1) { // last row
+          arrayList.add(numOfVertices - 1);
+        } else {
+          if (x > 0) {
+            arrayList.add(vertexOf(x - 1, y + 1));
+          }
+          arrayList.add(vertexOf(x, y + 1));
+          if (x < sc.width() - 1) {
+            arrayList.add(vertexOf(x + 1, y + 1));
+          }
+        }
       }
     }
 
