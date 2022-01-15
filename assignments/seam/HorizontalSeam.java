@@ -18,18 +18,20 @@ public class HorizontalSeam implements ISeamHelper {
         if (x == seamPicture.width() - 1) { // last column
           arrayList.add(numOfVertices - 1);
         } else {
-          if (y > 0) {
-            arrayList.add(vertexOf(seamPicture.width(), x + 1, y - 1));
-          }
-          arrayList.add(vertexOf(seamPicture.width(), x + 1, y));
-          if (y < seamPicture.height() - 1) {
-            arrayList.add(vertexOf(seamPicture.width(), x + 1, y + 1));
-          }
+          checkThenAdd(seamPicture, arrayList, x + 1, y - 1);
+          checkThenAdd(seamPicture, arrayList, x + 1, y);
+          checkThenAdd(seamPicture, arrayList, x + 1, y + 1);
         }
       }
     }
 
     return arrayList;
+  }
+
+  private void checkThenAdd(ISeamPicture seamPicture, ArrayList<Integer> arrayList, int x, int y) {
+    if (y >= 0 && y < seamPicture.height()) {
+      arrayList.add(vertexOf(seamPicture.width(), x, y));
+    }
   }
 
   @Override

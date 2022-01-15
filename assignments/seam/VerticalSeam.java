@@ -18,18 +18,20 @@ public class VerticalSeam implements ISeamHelper {
         if (y == seamPicture.height() - 1) { // last row
           arrayList.add(numOfVertices - 1);
         } else {
-          if (x > 0) {
-            arrayList.add(vertexOf(seamPicture.width(), x - 1, y + 1));
-          }
-          arrayList.add(vertexOf(seamPicture.width(), x, y + 1));
-          if (x < seamPicture.width() - 1) {
-            arrayList.add(vertexOf(seamPicture.width(), x + 1, y + 1));
-          }
+          checkThenAdd(seamPicture, arrayList, x - 1, y + 1);
+          checkThenAdd(seamPicture, arrayList, x, y + 1);
+          checkThenAdd(seamPicture, arrayList, x + 1, y + 1);
         }
       }
     }
 
     return arrayList;
+  }
+
+  private void checkThenAdd(ISeamPicture seamPicture, ArrayList<Integer> arrayList, int x, int y) {
+    if (x >= 0 && x < seamPicture.width()) {
+      arrayList.add(vertexOf(seamPicture.width(), x, y));
+    }
   }
 
   @Override
