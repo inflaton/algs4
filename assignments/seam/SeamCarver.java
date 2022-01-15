@@ -1,6 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 
-public class SeamCarver {
+public class SeamCarver implements ISeamPicture {
 
   private Picture picture;
 

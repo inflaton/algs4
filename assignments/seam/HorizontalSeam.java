@@ -2,30 +2,31 @@ import java.util.ArrayList;
 
 public class HorizontalSeam extends AbstractSeam {
 
-  public HorizontalSeam(SeamCarver sc) {
-    super(sc);
+  public HorizontalSeam(ISeamPicture seamPicture) {
+    super(seamPicture);
   }
 
   @Override
-  protected ArrayList<Integer> adjVertices(int v) {
+  protected ArrayList<Integer> adjVertices(int v, ISeamPicture seamPicture) {
+    int numOfVertices = seamPicture.width() * seamPicture.height() + 2;
     ArrayList<Integer> arrayList = new ArrayList<>();
     if (v < numOfVertices - 1) {
       if (v == 0) { // virtual start vertex
-        for (int y = 0; y < sc.height(); y++) {
+        for (int y = 0; y < seamPicture.height(); y++) {
           arrayList.add(vertexOf(0, y));
         }
       } else {
-        int x = (v - 1) % sc.width();
-        int y = (v - 1) / sc.width();
+        int x = (v - 1) % seamPicture.width();
+        int y = (v - 1) / seamPicture.width();
 
-        if (x == sc.width() - 1) { // last column
+        if (x == seamPicture.width() - 1) { // last column
           arrayList.add(numOfVertices - 1);
         } else {
           if (y > 0) {
             arrayList.add(vertexOf(x + 1, y - 1));
           }
           arrayList.add(vertexOf(x + 1, y));
-          if (y < sc.height() - 1) {
+          if (y < seamPicture.height() - 1) {
             arrayList.add(vertexOf(x + 1, y + 1));
           }
         }
@@ -36,8 +37,8 @@ public class HorizontalSeam extends AbstractSeam {
   }
 
   @Override
-  protected int seamLength() {
-    return sc.width();
+  protected int seamLength(ISeamPicture seamPicture) {
+    return seamPicture.width();
   }
 
   @Override
