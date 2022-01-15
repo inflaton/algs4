@@ -4,7 +4,7 @@ public class SeamCarver {
 
   private Picture picture;
 
-  private ISeamPicture seamPicture =
+  private final ISeamPicture seamPicture =
       new ISeamPicture() {
         @Override
         public int width() {
@@ -94,14 +94,14 @@ public class SeamCarver {
 
   // sequence of indices for horizontal seam
   public int[] findHorizontalSeam() {
-    HorizontalSeam horizontalSeam = new HorizontalSeam(seamPicture);
-    return horizontalSeam.seam();
+    HorizontalSeam horizontalSeam = new HorizontalSeam();
+    return new SeamFinder(seamPicture, horizontalSeam).seam();
   }
 
   // sequence of indices for vertical seam
   public int[] findVerticalSeam() {
-    VerticalSeam verticalSeam = new VerticalSeam(seamPicture);
-    return verticalSeam.seam();
+    VerticalSeam verticalSeam = new VerticalSeam();
+    return new SeamFinder(seamPicture, verticalSeam).seam();
   }
 
   // remove horizontal seam from current picture
