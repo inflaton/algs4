@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.FlowNetwork;
 import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -114,7 +113,6 @@ public class BaseballElimination {
     final int maxWins = w[index] + r[index];
     for (int i = 0; i < teams.length; i++) {
       if (i != index) {
-        v = vertexOfTeam(i, index);
         flowNetwork.addEdge(new FlowEdge(vertexOfTeam(i, index), t, maxWins - w[i]));
       }
     }
