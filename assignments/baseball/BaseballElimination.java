@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class BaseballElimination {
 
@@ -14,7 +15,7 @@ public class BaseballElimination {
   private final int[] l;
   private final int[] r;
   private final int[][] g;
-  private final ArrayList<String>[] certificateOfElimination;
+  private final HashMap<Integer, ArrayList<String>> certificateOfEliminationMap;
   private final int numOfVertices;
 
   public BaseballElimination(String filename) {
@@ -31,7 +32,7 @@ public class BaseballElimination {
     l = new int[numberOfTeams];
     r = new int[numberOfTeams];
     g = new int[numberOfTeams][numberOfTeams];
-    certificateOfElimination = new ArrayList[numberOfTeams];
+    certificateOfEliminationMap = new HashMap<>();
 
     for (int i = 0; i < numberOfTeams; i++) {
       teams[i] = in.readString();
@@ -79,15 +80,16 @@ public class BaseballElimination {
   }
 
   public boolean isEliminated(String team) {
-    return certificateOfElimination(team).iterator().hasNext();
+    return certificateOfElimination(team) != null;
   }
 
   public Iterable<String> certificateOfElimination(String team) {
     int index = findTeamIndex(team);
-    if (certificateOfElimination[index] == null && !isTriviallyEliminated(index)) {
+    if (certificateOfEliminationMap.get(index) == null && !isTriviallyEliminated(index)) {
       runFordFulkerson(index);
     }
-    return certificateOfElimination[index];
+    ArrayList<String> certificateOfElimination = certificateOfEliminationMap.get(index);
+    return certificateOfElimination.size() > 0 ? certificateOfElimination : null;
   }
 
   private void runFordFulkerson(int index) {
@@ -123,7 +125,7 @@ public class BaseballElimination {
         v = vertexOfTeam(i, index);
 
         if (fordFulkerson.inCut(v)) {
-          certificateOfElimination[index].add(teams[i]);
+          certificateOfEliminationMap.get(index).add(teams[i]);
         }
       }
     }
@@ -139,15 +141,18 @@ public class BaseballElimination {
 
   private boolean isTriviallyEliminated(int index) {
     final int maxWins = w[index] + r[index];
-    certificateOfElimination[index] = new ArrayList<>();
+    ArrayList<String> certificateOfElimination = new ArrayList<>();
+    certificateOfEliminationMap.put(index, certificateOfElimination);
+
     for (int i = 0; i < teams.length; i++) {
       if (i != index) {
         if (w[i] > maxWins) {
-          certificateOfElimination[index].add(teams[i]);
+          certificateOfElimination.add(teams[i]);
         }
       }
     }
-    return certificateOfElimination[index].size() > 0;
+
+    return certificateOfElimination.size() > 0;
   }
 
   public static void main(String[] args) {
@@ -160,7 +165,10 @@ public class BaseballElimination {
         }
         StdOut.println("}");
       } else {
-        StdOut.println(team + " is not eliminated");
+        StdOut.println(
+            team
+                + " is not eliminated; certificateOfElimination = "
+                + division.certificateOfElimination(team));
       }
     }
   }
