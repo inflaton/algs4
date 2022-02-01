@@ -61,7 +61,7 @@ public class DepthFirstDirectedPaths {
    * @param s the source vertex
    * @throws IllegalArgumentException unless {@code 0 <= s < V}
    */
-  public DepthFirstDirectedPaths(com.inflaton.datastructures.graph.digraph.Digraph G, int s) {
+  public DepthFirstDirectedPaths(Digraph G, int s) {
     marked = new boolean[G.V()];
     edgeTo = new int[G.V()];
     this.s = s;
@@ -69,7 +69,7 @@ public class DepthFirstDirectedPaths {
     dfs(G, s);
   }
 
-  private void dfs(com.inflaton.datastructures.graph.digraph.Digraph G, int v) {
+  private void dfs(Digraph G, int v) {
     marked[v] = true;
     for (int w : G.adj(v)) {
       if (!marked[w]) {
@@ -124,7 +124,7 @@ public class DepthFirstDirectedPaths {
    */
   public static void main(String[] args) {
     In in = new In(args[0]);
-    com.inflaton.datastructures.graph.digraph.Digraph G = new Digraph(in);
+    Digraph G = new Digraph(in);
     // StdOut.println(G);
 
     int s = Integer.parseInt(args[1]);
