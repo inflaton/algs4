@@ -10,8 +10,7 @@ public class BoggleSolver {
   public BoggleSolver(String[] dictionary) {
     trieDict = new BoggleTrie();
     for (String word : dictionary) {
-      int score = calcScore(word);
-      trieDict.put(word, score);
+      trieDict.add(word);
     }
   }
 
@@ -41,7 +40,7 @@ public class BoggleSolver {
   // Returns the score of the given word if it is in the dictionary, zero otherwise.
   // (You can assume the word contains only the uppercase letters A through Z.)
   public int scoreOf(String word) {
-    return trieDict.contains(word) ? trieDict.get(word) : 0;
+    return trieDict.contains(word) ? calcScore(word) : 0;
   }
 
   public static void main(String[] args) {

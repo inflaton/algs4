@@ -8,27 +8,8 @@ public class BoggleTrie {
 
   // R-way trie node
   private static class Node {
-    private Integer val;
+    private boolean isWord;
     private Node[] next = new Node[R];
-  }
-
-  /**
-   * Returns the value associated with the given key.
-   *
-   * @param key the key
-   * @return the value associated with the given key if the key is in the symbol table and {@code
-   *     null} if the key is not in the symbol table
-   * @throws IllegalArgumentException if {@code key} is {@code null}
-   */
-  public Integer get(String key) {
-    if (key == null) {
-      throw new IllegalArgumentException("argument to get() is null");
-    }
-    Node x = get(root, key, 0);
-    if (x == null) {
-      return null;
-    }
-    return x.val;
   }
 
   private Node get(Node x, String key, int d) {
@@ -53,7 +34,8 @@ public class BoggleTrie {
     if (key == null) {
       throw new IllegalArgumentException("argument to contains() is null");
     }
-    return get(key) != null;
+    Node x = get(root, key, 0);
+    return x != null && x.isWord;
   }
 
   /**
@@ -65,26 +47,26 @@ public class BoggleTrie {
    * @param val the value
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
-  public void put(String key, Integer val) {
-    if (key == null || val == null) {
+  public void add(String key) {
+    if (key == null) {
       throw new IllegalArgumentException("argument to put() is null");
     }
-    root = put(root, key, val, 0);
+    root = add(root, key, 0);
   }
 
-  private Node put(Node x, String key, Integer val, int d) {
+  private Node add(Node x, String key, int d) {
     if (x == null) {
       x = new Node();
     }
     if (d == key.length()) {
-      if (x.val == null) {
+      if (!x.isWord) {
         numberOfKeys++;
       }
-      x.val = val;
+      x.isWord = true;
       return x;
     }
     char c = key.charAt(d);
-    x.next[c - 'A'] = put(x.next[c - 'A'], key, val, d + 1);
+    x.next[c - 'A'] = add(x.next[c - 'A'], key, d + 1);
     return x;
   }
 
@@ -123,7 +105,7 @@ public class BoggleTrie {
     if (x == null) {
       return;
     }
-    if (x.val != null) {
+    if (x.isWord) {
       results.enqueue(prefix.toString());
     }
     for (char c = 0; c < R; c++) {
