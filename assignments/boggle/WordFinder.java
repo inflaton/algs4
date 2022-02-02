@@ -4,7 +4,7 @@ import java.util.HashSet;
 public class WordFinder {
   private final int numOfVertices;
   private final boolean[] onStack;
-  private final String[] boardLetters;
+  private final char[] boardLetters;
   private final HashSet<String> allWords;
   private final BoggleTrie trieDict;
   private final BoggleBoard board;
@@ -19,49 +19,40 @@ public class WordFinder {
     this.board = board;
     numOfVertices = board.rows() * board.cols() + 1;
 
-    boardLetters = new String[numOfVertices];
+    boardLetters = new char[numOfVertices];
     adjVerticesArray = new int[numOfVertices][];
 
     for (int v = 0; v < numOfVertices; v++) {
       adjVerticesArray[v] = adjVertices(v);
-      if (v == 0) {
-        boardLetters[v] = "";
-      } else {
+      if (v > 0) {
         int i = (v - 1) / board.cols();
         int j = (v - 1) % board.cols();
-        char letter = board.getLetter(i, j);
-        if (letter == 'Q') {
-          boardLetters[v] = "QU";
-        } else {
-          boardLetters[v] = String.valueOf(letter);
-        }
+        boardLetters[v] = board.getLetter(i, j);
       }
     }
 
     allWords = new HashSet<>();
     onStack = new boolean[numOfVertices];
 
-    String prefix = "";
-    dfs(prefix, 0);
+    dfs(null, 0);
   }
 
-  private void dfs(String prefix, int v) {
-    prefix = prefix + boardLetters[v];
+  private void dfs(BoggleTrie.Node node, int v) {
+    if (v > 0) {
+      node = trieDict.getNextNode(node, boardLetters[v]);
 
-    if (prefix.length() > 0) {
-      BoggleTrie.Node node = trieDict.get(prefix);
       if (node == null) {
         return;
       }
-      if (node.isWord() && prefix.length() > 2) {
-        allWords.add(prefix);
+      if (node.isWord() && node.getWord().length() > 2) {
+        allWords.add(node.getWord());
       }
     }
 
     onStack[v] = true;
     for (int w : adjVerticesArray[v]) {
       if (!onStack[w]) {
-        dfs(prefix, w);
+        dfs(node, w);
       }
     }
     onStack[v] = false;

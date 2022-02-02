@@ -4,19 +4,23 @@ public class BoggleTrie {
 
   // R-way trie node
   public static class Node {
-    private boolean isWord;
+    public String word;
     private Node[] next = new Node[R];
 
     public boolean isWord() {
-      return isWord;
+      return word != null;
+    }
+
+    public String getWord() {
+      return word;
     }
   }
 
-  public Node get(String prefix) {
-    if (prefix == null) {
-      throw new IllegalArgumentException("argument to get() is null");
+  public Node getNextNode(Node node, char c) {
+    if (node == null) {
+      node = root;
     }
-    return get(root, prefix, 0);
+    return node.next[c - 'A'];
   }
 
   private Node get(Node x, String key, int d) {
@@ -42,21 +46,7 @@ public class BoggleTrie {
       throw new IllegalArgumentException("argument to contains() is null");
     }
     Node x = get(root, key, 0);
-    return x != null && x.isWord;
-  }
-
-  /**
-   * check if this symbol table contain keys in the set that start with {@code prefix}.
-   *
-   * @param prefix the prefix
-   * @return all of the keys in the set that start with {@code prefix}, as an iterable
-   */
-  public boolean hasKeysWithPrefix(String prefix) {
-    if (prefix == null) {
-      throw new IllegalArgumentException("argument to contains() is null");
-    }
-    Node x = get(root, prefix, 0);
-    return x != null;
+    return x != null && x.isWord();
   }
 
   /**
@@ -69,23 +59,37 @@ public class BoggleTrie {
    */
   public void add(String key) {
     if (key == null) {
-      throw new IllegalArgumentException("argument to put() is null");
+      throw new IllegalArgumentException("argument to add() is null");
     }
-    root = add(root, key, 0);
+    try {
+      root = add(root, key, 0);
+    } catch (IllegalArgumentException exception) {
+      // StdOut.println("ignored invalid key: " + key);
+    }
   }
 
   private Node add(Node x, String key, int d) {
     if (x == null) {
       x = new Node();
     }
+
     if (d == key.length()) {
-      if (!x.isWord) {
-        x.isWord = true;
+      if (!x.isWord()) {
+        x.word = key;
       }
       return x;
     }
+
     char c = key.charAt(d);
-    x.next[c - 'A'] = add(x.next[c - 'A'], key, d + 1);
+    int nextIndex = d + 1;
+    boolean isQu = (c == 'Q');
+    if (c < 'A' || c > 'Z' || isQu && (nextIndex == key.length() || key.charAt(nextIndex) != 'U')) {
+      throw new IllegalArgumentException("wrong key: " + key);
+    }
+    if (isQu) {
+      nextIndex++;
+    }
+    x.next[c - 'A'] = add(x.next[c - 'A'], key, nextIndex);
     return x;
   }
 }
