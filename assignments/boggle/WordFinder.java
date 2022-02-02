@@ -1,20 +1,19 @@
 import edu.princeton.cs.algs4.SET;
-import edu.princeton.cs.algs4.TST;
 
 public class WordFinder {
   private final int numOfVertices;
   private final boolean[] onStack;
   private final String[] boardLetters;
   private final SET<String> allWords;
-  private final TST<Integer> tstDict;
+  private final BoggleTrieST<Integer> trieDict;
   private final BoggleBoard board;
 
-  public WordFinder(TST<Integer> tstDict, BoggleBoard board) {
+  public WordFinder(BoggleTrieST<Integer> trieDict, BoggleBoard board) {
     if (board == null) {
       throw new IllegalArgumentException();
     }
 
-    this.tstDict = tstDict;
+    this.trieDict = trieDict;
     this.board = board;
     numOfVertices = board.rows() * board.cols() + 1;
 
@@ -45,9 +44,9 @@ public class WordFinder {
     prefix = prefix + boardLetters[v];
 
     if (prefix.length() > 2) {
-      if (tstDict.contains(prefix)) {
+      if (trieDict.contains(prefix)) {
         allWords.add(prefix);
-      } else if (!tstDict.keysWithPrefix(prefix).iterator().hasNext()) {
+      } else if (!trieDict.keysWithPrefix(prefix).iterator().hasNext()) {
         return;
       }
     }
