@@ -1,10 +1,6 @@
-import edu.princeton.cs.algs4.Queue;
-
 public class BoggleTrie {
   private static final int R = 26; // uppercase letters only
-
   private Node root; // root of trie
-  private int numberOfKeys; // number of keys in trie
 
   // R-way trie node
   private static class Node {
@@ -73,58 +69,12 @@ public class BoggleTrie {
     }
     if (d == key.length()) {
       if (!x.isWord) {
-        numberOfKeys++;
+        x.isWord = true;
       }
-      x.isWord = true;
       return x;
     }
     char c = key.charAt(d);
     x.next[c - 'A'] = add(x.next[c - 'A'], key, d + 1);
     return x;
-  }
-
-  /**
-   * Returns the number of key-value pairs in this symbol table.
-   *
-   * @return the number of key-value pairs in this symbol table
-   */
-  public int size() {
-    return numberOfKeys;
-  }
-
-  /*
-   * Is this symbol table empty?
-   *
-   * @return {@code true} if this symbol table is empty and {@code false} otherwise
-   */
-  public boolean isEmpty() {
-    return size() == 0;
-  }
-
-  /**
-   * Returns all of the keys in the set that start with {@code prefix}.
-   *
-   * @param prefix the prefix
-   * @return all of the keys in the set that start with {@code prefix}, as an iterable
-   */
-  public Iterable<String> keysWithPrefix(String prefix) {
-    Queue<String> results = new Queue<String>();
-    Node x = get(root, prefix, 0);
-    collect(x, new StringBuilder(prefix), results);
-    return results;
-  }
-
-  private void collect(Node x, StringBuilder prefix, Queue<String> results) {
-    if (x == null) {
-      return;
-    }
-    if (x.isWord) {
-      results.enqueue(prefix.toString());
-    }
-    for (char c = 0; c < R; c++) {
-      prefix.append(c + 'A');
-      collect(x.next[c], prefix, results);
-      prefix.deleteCharAt(prefix.length() - 1);
-    }
   }
 }

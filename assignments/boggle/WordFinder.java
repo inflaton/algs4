@@ -9,6 +9,7 @@ public class WordFinder {
   private final SET<String> allWords;
   private final BoggleTrie trieDict;
   private final BoggleBoard board;
+  private final int[][] adjVerticesArray;
 
   public WordFinder(BoggleTrie trieDict, BoggleBoard board) {
     if (board == null) {
@@ -20,7 +21,10 @@ public class WordFinder {
     numOfVertices = board.rows() * board.cols() + 1;
 
     boardLetters = new String[numOfVertices];
+    adjVerticesArray = new int[numOfVertices][];
+
     for (int v = 0; v < numOfVertices; v++) {
+      adjVerticesArray[v] = adjVertices(v);
       if (v == 0) {
         boardLetters[v] = "";
       } else {
@@ -54,7 +58,7 @@ public class WordFinder {
     }
 
     onStack[v] = true;
-    for (int w : adj(v)) {
+    for (int w : adjVerticesArray[v]) {
       if (!onStack[w]) {
         dfs(prefix, w);
       }
@@ -62,7 +66,7 @@ public class WordFinder {
     onStack[v] = false;
   }
 
-  private ArrayList<Integer> adj(int v) {
+  private int[] adjVertices(int v) {
     ArrayList<Integer> adjVertices = new ArrayList<>();
     if (v == 0) { // virtual start vertex
       for (int w = 1; w < numOfVertices; w++) {
@@ -83,7 +87,11 @@ public class WordFinder {
       checkThenAdd(adjVertices, i + 1, j + 1);
     }
 
-    return adjVertices;
+    int[] array = new int[adjVertices.size()];
+    for (int i = 0; i < array.length; i++) {
+      array[i] = adjVertices.get(i);
+    }
+    return array;
   }
 
   private void checkThenAdd(ArrayList<Integer> adjVertices, int i, int j) {
