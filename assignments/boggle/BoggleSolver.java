@@ -48,23 +48,26 @@ public class BoggleSolver {
   public static void main(String[] args) {
     In in = new In(args[0]);
     String[] dictionary = in.readAllStrings();
+    Stopwatch stopwatch = new Stopwatch();
     BoggleSolver solver = new BoggleSolver(dictionary);
+    double elapsedTime = stopwatch.elapsedTime();
+    StdOut.println("constructor elapsedTime: " + elapsedTime);
 
     for (int i = 1; i < args.length; i++) {
       String filename = args[i];
       StdOut.println(filename);
       BoggleBoard board = new BoggleBoard(filename);
 
-      Stopwatch stopwatch = new Stopwatch();
+      stopwatch = new Stopwatch();
       Iterable<String> words = solver.getAllValidWords(board);
-      double elapsedTime = stopwatch.elapsedTime();
+      elapsedTime = stopwatch.elapsedTime();
 
       int score = 0;
       for (String word : words) {
         score += solver.scoreOf(word);
       }
       StdOut.println("Score = " + score);
-      StdOut.println("elapsedTime: " + elapsedTime);
+      StdOut.println("getAllValidWords elapsedTime: " + elapsedTime);
     }
   }
 }
