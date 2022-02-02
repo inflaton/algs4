@@ -61,32 +61,32 @@ public class WordFinder {
   }
 
   private SET<Integer> adj(int v) {
-    SET<Integer> SET = new SET<>();
+    SET<Integer> adjVertices = new SET<>();
     if (v == 0) { // virtual start vertex
       for (int w = 1; w < numOfVertices; w++) {
-        SET.add(w);
+        adjVertices.add(w);
       }
     } else {
       int i = (v - 1) / board.cols();
       int j = (v - 1) % board.cols();
 
-      checkThenAdd(SET, i, j - 1);
-      checkThenAdd(SET, i, j + 1);
-      checkThenAdd(SET, i - 1, j);
-      checkThenAdd(SET, i + 1, j);
+      checkThenAdd(adjVertices, i, j - 1);
+      checkThenAdd(adjVertices, i, j + 1);
+      checkThenAdd(adjVertices, i - 1, j);
+      checkThenAdd(adjVertices, i + 1, j);
 
-      checkThenAdd(SET, i - 1, j - 1);
-      checkThenAdd(SET, i - 1, j + 1);
-      checkThenAdd(SET, i + 1, j - 1);
-      checkThenAdd(SET, i + 1, j + 1);
+      checkThenAdd(adjVertices, i - 1, j - 1);
+      checkThenAdd(adjVertices, i - 1, j + 1);
+      checkThenAdd(adjVertices, i + 1, j - 1);
+      checkThenAdd(adjVertices, i + 1, j + 1);
     }
 
-    return SET;
+    return adjVertices;
   }
 
-  private void checkThenAdd(SET<Integer> SET, int i, int j) {
+  private void checkThenAdd(SET<Integer> adjVertices, int i, int j) {
     if (i >= 0 && i < board.rows() && j >= 0 && j < board.cols()) {
-      SET.add(vertexOf(i, j));
+      adjVertices.add(vertexOf(i, j));
     }
   }
 

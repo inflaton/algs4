@@ -30,12 +30,7 @@ public class BoggleSolver {
     if (len == 7 || len == 3) {
       return len - 2;
     }
-
-    if (len > 3 && len < 7) {
-      return len - 3;
-    }
-
-    return 0;
+    return len > 3 ? len - 3 : 0;
   }
 
   // Returns the set of all valid words in the given Boggle board, as an Iterable.
@@ -47,8 +42,7 @@ public class BoggleSolver {
   // Returns the score of the given word if it is in the dictionary, zero otherwise.
   // (You can assume the word contains only the uppercase letters A through Z.)
   public int scoreOf(String word) {
-    Integer value = tstDict.get(word);
-    return value != null ? value : 0;
+    return tstDict.contains(word) ? tstDict.get(word) : 0;
   }
 
   public static void main(String[] args) {
