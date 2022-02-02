@@ -24,7 +24,7 @@ public class BoggleTrie {
   }
 
   /**
-   * Does this symbol table contain the given key?
+   * check if this symbol table contain the given key.
    *
    * @param key the key
    * @return {@code true} if this symbol table contains {@code key} and {@code false} otherwise
@@ -39,12 +39,25 @@ public class BoggleTrie {
   }
 
   /**
+   * check if this symbol table contain keys in the set that start with {@code prefix}.
+   *
+   * @param prefix the prefix
+   * @return all of the keys in the set that start with {@code prefix}, as an iterable
+   */
+  public boolean hasKeysWithPrefix(String prefix) {
+    if (prefix == null) {
+      throw new IllegalArgumentException("argument to contains() is null");
+    }
+    Node x = get(root, prefix, 0);
+    return x != null;
+  }
+
+  /**
    * Inserts the key-value pair into the symbol table, overwriting the old value with the new value
    * if the key is already in the symbol table. If the value is {@code null}, this effectively
    * deletes the key from the symbol table.
    *
    * @param key the key
-   * @param val the value
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
   public void add(String key) {

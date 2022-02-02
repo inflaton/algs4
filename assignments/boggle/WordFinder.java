@@ -1,5 +1,7 @@
 import edu.princeton.cs.algs4.SET;
 
+import java.util.ArrayList;
+
 public class WordFinder {
   private final int numOfVertices;
   private final boolean[] onStack;
@@ -43,13 +45,14 @@ public class WordFinder {
   private void dfs(String prefix, int v) {
     prefix = prefix + boardLetters[v];
 
-    if (prefix.length() > 2) {
-      if (trieDict.contains(prefix)) {
-        allWords.add(prefix);
-      } else if (!trieDict.keysWithPrefix(prefix).iterator().hasNext()) {
-        return;
-      }
+    if (prefix.length() > 0 && !trieDict.hasKeysWithPrefix(prefix)) {
+      return;
     }
+
+    if (prefix.length() > 2 && trieDict.contains(prefix)) {
+      allWords.add(prefix);
+    }
+
     onStack[v] = true;
     for (int w : adj(v)) {
       if (!onStack[w]) {
@@ -59,8 +62,8 @@ public class WordFinder {
     onStack[v] = false;
   }
 
-  private SET<Integer> adj(int v) {
-    SET<Integer> adjVertices = new SET<>();
+  private ArrayList<Integer> adj(int v) {
+    ArrayList<Integer> adjVertices = new ArrayList<>();
     if (v == 0) { // virtual start vertex
       for (int w = 1; w < numOfVertices; w++) {
         adjVertices.add(w);
@@ -83,7 +86,7 @@ public class WordFinder {
     return adjVertices;
   }
 
-  private void checkThenAdd(SET<Integer> adjVertices, int i, int j) {
+  private void checkThenAdd(ArrayList<Integer> adjVertices, int i, int j) {
     if (i >= 0 && i < board.rows() && j >= 0 && j < board.cols()) {
       adjVertices.add(vertexOf(i, j));
     }
