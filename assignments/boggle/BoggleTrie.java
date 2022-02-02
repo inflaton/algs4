@@ -31,7 +31,15 @@ public class BoggleTrie {
       return x;
     }
     char c = key.charAt(d);
-    return get(x.next[c - 'A'], key, d + 1);
+    int nextIndex = d + 1;
+    boolean isQu = (c == 'Q');
+    if (c < 'A' || c > 'Z' || isQu && (nextIndex == key.length() || key.charAt(nextIndex) != 'U')) {
+      return null;
+    }
+    if (isQu) {
+      nextIndex++;
+    }
+    return get(x.next[c - 'A'], key, nextIndex);
   }
 
   /**

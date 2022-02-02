@@ -54,6 +54,11 @@ public class BoggleSolver {
     double elapsedTime = stopwatch.elapsedTime();
     StdOut.println("constructor elapsedTime: " + elapsedTime);
 
+    String word = "QUANTITIES";
+    StdOut.println("scoreOf('" + word + "'): " + solver.scoreOf(word));
+    word = "QUODS";
+    StdOut.println("scoreOf('" + word + "'): " + solver.scoreOf(word));
+
     for (int i = 1; i < args.length; i++) {
       String filename = args[i];
       StdOut.println(filename);
@@ -64,11 +69,13 @@ public class BoggleSolver {
       elapsedTime = stopwatch.elapsedTime();
 
       int score = 0;
-      for (String word : words) {
-        score += solver.scoreOf(word);
+      for (String w : words) {
+        score += solver.scoreOf(w);
       }
       StdOut.println("Score = " + score);
       StdOut.println("getAllValidWords elapsedTime: " + elapsedTime);
+
+      assert filename.endsWith("points" + score + ".txt");
     }
   }
 }
