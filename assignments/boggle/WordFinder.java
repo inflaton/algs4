@@ -5,10 +5,10 @@ public class WordFinder {
   private final boolean[] onStack;
   private final String[] boardLetters;
   private final SET<String> allWords;
-  private final BoggleTrieST<Integer> trieDict;
+  private final BoggleTrie<Integer> trieDict;
   private final BoggleBoard board;
 
-  public WordFinder(BoggleTrieST<Integer> trieDict, BoggleBoard board) {
+  public WordFinder(BoggleTrie<Integer> trieDict, BoggleBoard board) {
     if (board == null) {
       throw new IllegalArgumentException();
     }

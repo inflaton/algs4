@@ -3,12 +3,12 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stopwatch;
 
 public class BoggleSolver {
-  private final BoggleTrieST<Integer> trieDict;
+  private final BoggleTrie<Integer> trieDict;
 
   // Initializes the data structure using the given array of strings as the dictionary.
   // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
   public BoggleSolver(String[] dictionary) {
-    trieDict = new BoggleTrieST<>();
+    trieDict = new BoggleTrie<>();
     for (String word : dictionary) {
       int score = calcScore(word);
       trieDict.put(word, score);
