@@ -1,14 +1,14 @@
 import edu.princeton.cs.algs4.Queue;
 
-public class BoggleTrie<T> {
+public class BoggleTrie {
   private static final int R = 26; // uppercase letters only
 
-  private Node<T> root; // root of trie
+  private Node root; // root of trie
   private int numberOfKeys; // number of keys in trie
 
   // R-way trie node
-  private static class Node<T> {
-    private T val;
+  private static class Node {
+    private Integer val;
     private Node[] next = new Node[R];
   }
 
@@ -20,21 +20,29 @@ public class BoggleTrie<T> {
    *     null} if the key is not in the symbol table
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
-  public T get(String key) {
-    if (key == null) throw new IllegalArgumentException("argument to get() is null");
-    Node<T> x = get(root, key, 0);
-    if (x == null) return null;
+  public Integer get(String key) {
+    if (key == null) {
+      throw new IllegalArgumentException("argument to get() is null");
+    }
+    Node x = get(root, key, 0);
+    if (x == null) {
+      return null;
+    }
     return x.val;
   }
 
-  private Node<T> get(Node<T> x, String key, int d) {
-    if (x == null) return null;
-    if (d == key.length()) return x;
+  private Node get(Node x, String key, int d) {
+    if (x == null) {
+      return null;
+    }
+    if (d == key.length()) {
+      return x;
+    }
     char c = key.charAt(d);
     return get(x.next[c - 'A'], key, d + 1);
   }
 
-  /*
+  /**
    * Does this symbol table contain the given key?
    *
    * @param key the key
@@ -42,7 +50,9 @@ public class BoggleTrie<T> {
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
   public boolean contains(String key) {
-    if (key == null) throw new IllegalArgumentException("argument to contains() is null");
+    if (key == null) {
+      throw new IllegalArgumentException("argument to contains() is null");
+    }
     return get(key) != null;
   }
 
@@ -55,15 +65,21 @@ public class BoggleTrie<T> {
    * @param val the value
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
-  public void put(String key, T val) {
-    if (key == null || val == null) throw new IllegalArgumentException("argument to put() is null");
-    else root = put(root, key, val, 0);
+  public void put(String key, Integer val) {
+    if (key == null || val == null) {
+      throw new IllegalArgumentException("argument to put() is null");
+    }
+    root = put(root, key, val, 0);
   }
 
-  private Node put(Node x, String key, T val, int d) {
-    if (x == null) x = new Node();
+  private Node put(Node x, String key, Integer val, int d) {
+    if (x == null) {
+      x = new Node();
+    }
     if (d == key.length()) {
-      if (x.val == null) numberOfKeys++;
+      if (x.val == null) {
+        numberOfKeys++;
+      }
       x.val = val;
       return x;
     }
@@ -104,30 +120,15 @@ public class BoggleTrie<T> {
   }
 
   private void collect(Node x, StringBuilder prefix, Queue<String> results) {
-    if (x == null) return;
-    if (x.val != null) results.enqueue(prefix.toString());
+    if (x == null) {
+      return;
+    }
+    if (x.val != null) {
+      results.enqueue(prefix.toString());
+    }
     for (char c = 0; c < R; c++) {
       prefix.append(c + 'A');
       collect(x.next[c], prefix, results);
-      prefix.deleteCharAt(prefix.length() - 1);
-    }
-  }
-
-  private void collect(Node x, StringBuilder prefix, String pattern, Queue<String> results) {
-    if (x == null) return;
-    int d = prefix.length();
-    if (d == pattern.length() && x.val != null) results.enqueue(prefix.toString());
-    if (d == pattern.length()) return;
-    char c = pattern.charAt(d);
-    if (c == '.') {
-      for (char ch = 0; ch < R; ch++) {
-        prefix.append(ch);
-        collect(x.next[ch - 'A'], prefix, pattern, results);
-        prefix.deleteCharAt(prefix.length() - 1);
-      }
-    } else {
-      prefix.append(c);
-      collect(x.next[c - 'A'], prefix, pattern, results);
       prefix.deleteCharAt(prefix.length() - 1);
     }
   }
