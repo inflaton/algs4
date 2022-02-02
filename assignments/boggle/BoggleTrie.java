@@ -4,7 +4,7 @@ public class BoggleTrie {
 
   // R-way trie node
   public static class Node {
-    public String word;
+    private String word;
     private Node[] next = new Node[R];
 
     public boolean isWord() {
