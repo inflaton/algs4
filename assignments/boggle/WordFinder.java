@@ -1,12 +1,11 @@
-import edu.princeton.cs.algs4.SET;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class WordFinder {
   private final int numOfVertices;
   private final boolean[] onStack;
   private final String[] boardLetters;
-  private final SET<String> allWords;
+  private final HashSet<String> allWords;
   private final BoggleTrie trieDict;
   private final BoggleBoard board;
   private final int[][] adjVerticesArray;
@@ -39,7 +38,7 @@ public class WordFinder {
       }
     }
 
-    allWords = new SET<>();
+    allWords = new HashSet<>();
     onStack = new boolean[numOfVertices];
 
     String prefix = "";
@@ -49,12 +48,14 @@ public class WordFinder {
   private void dfs(String prefix, int v) {
     prefix = prefix + boardLetters[v];
 
-    if (prefix.length() > 0 && !trieDict.hasKeysWithPrefix(prefix)) {
-      return;
-    }
-
-    if (prefix.length() > 2 && trieDict.contains(prefix)) {
-      allWords.add(prefix);
+    if (prefix.length() > 0) {
+      BoggleTrie.Node node = trieDict.get(prefix);
+      if (node == null) {
+        return;
+      }
+      if (node.isWord() && prefix.length() > 2) {
+        allWords.add(prefix);
+      }
     }
 
     onStack[v] = true;
@@ -104,7 +105,7 @@ public class WordFinder {
     return i * board.cols() + j + 1;
   }
 
-  public SET<String> getAllWords() {
+  public Iterable<String> getAllWords() {
     return allWords;
   }
 }

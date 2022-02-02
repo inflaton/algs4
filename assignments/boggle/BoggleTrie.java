@@ -3,9 +3,20 @@ public class BoggleTrie {
   private Node root; // root of trie
 
   // R-way trie node
-  private static class Node {
+  public static class Node {
     private boolean isWord;
     private Node[] next = new Node[R];
+
+    public boolean isWord() {
+      return isWord;
+    }
+  }
+
+  public Node get(String prefix) {
+    if (prefix == null) {
+      throw new IllegalArgumentException("argument to get() is null");
+    }
+    return get(root, prefix, 0);
   }
 
   private Node get(Node x, String key, int d) {
