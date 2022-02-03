@@ -1,17 +1,13 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
-import java.util.Arrays;
-
 public class MoveToFront {
   // alphabet size of extended ASCII
   private static final int R = 256;
-  private final int[] charArray;
-  private final int[] indexArray;
+  private static final int[] charArray = new int[R];
+  private static final int[] indexArray = new int[R];
 
-  private MoveToFront() {
-    charArray = new int[R];
-    indexArray = new int[R];
+  private static void resetArrays() {
     for (int i = 0; i < R; i++) {
       charArray[i] = i;
       indexArray[i] = i;
@@ -20,63 +16,46 @@ public class MoveToFront {
 
   // apply move-to-front encoding, reading from standard input and writing to standard output
   public static void encode() {
-    MoveToFront moveToFront = new MoveToFront();
-    // StdOut.println(moveToFront);
+    resetArrays();
+
     while (!BinaryStdIn.isEmpty()) {
       byte b = BinaryStdIn.readByte();
-      byte i = moveToFront.indexOf(b);
-
-      // StdOut.println((char) b + ": " + i);
-      moveToFront.go(i);
+      byte i = indexOf(b);
+      moveToFront(i);
       BinaryStdOut.write(i);
     }
 
     BinaryStdOut.close();
   }
 
-  private byte indexOf(byte b) {
+  private static byte indexOf(byte b) {
     return (byte) indexArray[b];
   }
 
-  private byte charAt(int i) {
+  private static byte charAt(int i) {
     return (byte) charArray[i];
   }
 
-  private void swap(int i, int j) {
-    int swap = charArray[i];
-    charArray[i] = charArray[j];
-    charArray[j] = swap;
-    indexArray[charArray[i]] = i;
-    indexArray[charArray[j]] = j;
-  }
-
-  private void go(int k) {
-    while (k > 0) {
-      swap(k, k - 1);
-      k--;
+  private static void moveToFront(int k) {
+    if (k > 0) {
+      int swap = charArray[k];
+      for (int i = k; i > 0; i--) {
+        indexArray[charArray[i - 1]] = i;
+        charArray[i] = charArray[i - 1];
+      }
+      charArray[0] = swap;
+      indexArray[swap] = 0;
     }
-  }
-
-  @Override
-  public String toString() {
-    return "MoveToFront{"
-        + "\ncharArray="
-        + Arrays.toString(charArray)
-        + "\nindexArray="
-        + Arrays.toString(indexArray)
-        + "\n}";
   }
 
   // apply move-to-front decoding, reading from standard input and writing to standard output
   public static void decode() {
-    MoveToFront moveToFront = new MoveToFront();
-    // StdOut.println(moveToFront);
+    resetArrays();
+
     while (!BinaryStdIn.isEmpty()) {
       byte i = BinaryStdIn.readByte();
-      byte b = moveToFront.charAt(i);
-
-      // StdOut.println((char) b + ": " + i);
-      moveToFront.go(i);
+      byte b = charAt(i);
+      moveToFront(i);
       BinaryStdOut.write(b);
     }
 
