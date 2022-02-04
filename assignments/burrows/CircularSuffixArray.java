@@ -5,16 +5,32 @@ public class CircularSuffixArray {
 
   private static class IndexedSuffix implements Comparable<IndexedSuffix> {
     private final int index;
-    private final String suffix;
+    private final char[] suffixChars;
 
     public IndexedSuffix(int i, char[] chars) {
       index = i;
-      suffix = String.valueOf(chars);
+      suffixChars = chars;
     }
 
     @Override
     public int compareTo(IndexedSuffix that) {
-      return this.suffix.compareTo(that.suffix);
+      int r = 0;
+      for (int i = 0; i < suffixChars.length; i++) {
+        r = Character.compare(this.charAt(i), that.charAt(i));
+        if (r != 0) {
+          break;
+        }
+      }
+
+      return r;
+    }
+
+    private char charAt(int i) {
+      i += index;
+      if (i >= suffixChars.length) {
+        i -= suffixChars.length;
+      }
+      return suffixChars[i];
     }
   }
 
@@ -25,25 +41,13 @@ public class CircularSuffixArray {
     if (s == null) {
       throw new IllegalArgumentException();
     }
+    char[] suffixChars = s.toCharArray();
     suffixArray = new IndexedSuffix[s.length()];
-    char[] chars = s.toCharArray();
     for (int i = 0; i < s.length(); i++) {
-      if (i > 0) {
-        rotate(chars);
-      }
-      suffixArray[i] = new IndexedSuffix(i, chars);
+      suffixArray[i] = new IndexedSuffix(i, suffixChars);
     }
 
     MergeX.sort(suffixArray);
-  }
-
-  private void rotate(char[] chars) {
-    int k = chars.length - 1;
-    char swap = chars[0];
-    for (int i = 0; i < k; i++) {
-      chars[i] = chars[i + 1];
-    }
-    chars[k] = swap;
   }
 
   // length of s
