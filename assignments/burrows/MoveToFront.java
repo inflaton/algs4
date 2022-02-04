@@ -1,40 +1,55 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class MoveToFront {
   private static class Worker {
     // alphabet size of extended ASCII
     private static final int R = 256;
-    private final int[] charArray;
-    private final int[] indexArray;
+    private final byte[] byteArray;
+    private final HashMap<Byte, Integer> indexMap;
 
     public Worker() {
-      charArray = new int[R];
-      indexArray = new int[R];
+      byteArray = new byte[R];
+      indexMap = new HashMap<>();
       for (int i = 0; i < R; i++) {
-        charArray[i] = i;
-        indexArray[i] = i;
+        byte b = (byte) i;
+        byteArray[i] = b;
+        indexMap.put(b, i);
       }
     }
 
-    public byte indexOf(byte b) {
-      return (byte) indexArray[((int) b) & 0xff];
+    public int indexOf(byte b) {
+      return indexMap.get(b);
     }
 
-    public byte charAt(byte i) {
-      return (byte) charArray[((int) i) & 0xff];
+    public byte byteAt(int i) {
+      return (byte) byteArray[i];
+    }
+
+    public int toInt(byte b) {
+      int i = b < 0 ? R + b : b;
+      return i;
     }
 
     public void moveToFront(int k) {
       if (k > 0) {
-        int swap = charArray[k];
+        byte swap = byteArray[k];
         for (int i = k; i > 0; i--) {
-          indexArray[charArray[i - 1]] = i;
-          charArray[i] = charArray[i - 1];
+          byte b = byteArray[i - 1];
+          indexMap.put(b, i);
+          byteArray[i] = b;
         }
-        charArray[0] = swap;
-        indexArray[swap] = 0;
+        byteArray[0] = swap;
+        indexMap.put(swap, 0);
       }
+    }
+
+    @Override
+    public String toString() {
+      return "Worker{" + "byteArray=" + Arrays.toString(byteArray) + ", indexMap=" + indexMap + '}';
     }
   }
 
@@ -44,9 +59,9 @@ public class MoveToFront {
 
     while (!BinaryStdIn.isEmpty()) {
       byte b = BinaryStdIn.readByte();
-      byte i = worker.indexOf(b);
+      int i = worker.indexOf(b);
       worker.moveToFront(i);
-      BinaryStdOut.write(i);
+      BinaryStdOut.write((byte) i);
     }
 
     BinaryStdOut.close();
@@ -57,8 +72,9 @@ public class MoveToFront {
     Worker worker = new Worker();
 
     while (!BinaryStdIn.isEmpty()) {
-      byte i = BinaryStdIn.readByte();
-      byte b = worker.charAt(i);
+      byte b = BinaryStdIn.readByte();
+      int i = worker.toInt(b);
+      b = worker.byteAt(i);
       worker.moveToFront(i);
       BinaryStdOut.write(b);
     }
