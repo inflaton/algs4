@@ -1,32 +1,29 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
 public class MoveToFront {
   private static class Worker {
     // alphabet size of extended ASCII
     private static final int R = 256;
     private final byte[] byteArray;
-    private final HashMap<Byte, Integer> indexMap;
+    private final int[] indexArray;
 
     public Worker() {
       byteArray = new byte[R];
-      indexMap = new HashMap<>();
+      indexArray = new int[R];
       for (int i = 0; i < R; i++) {
         byte b = (byte) i;
         byteArray[i] = b;
-        indexMap.put(b, i);
+        indexArray[i] = i;
       }
     }
 
     public int indexOf(byte b) {
-      return indexMap.get(b);
+      return indexArray[toInt(b)];
     }
 
     public byte byteAt(int i) {
-      return (byte) byteArray[i];
+      return byteArray[i];
     }
 
     public int toInt(byte b) {
@@ -39,17 +36,12 @@ public class MoveToFront {
         byte swap = byteArray[k];
         for (int i = k; i > 0; i--) {
           byte b = byteArray[i - 1];
-          indexMap.put(b, i);
+          indexArray[toInt(b)] = i;
           byteArray[i] = b;
         }
         byteArray[0] = swap;
-        indexMap.put(swap, 0);
+        indexArray[toInt(swap)] = 0;
       }
-    }
-
-    @Override
-    public String toString() {
-      return "Worker{" + "byteArray=" + Arrays.toString(byteArray) + ", indexMap=" + indexMap + '}';
     }
   }
 
