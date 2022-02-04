@@ -17,15 +17,15 @@ public class MoveToFront {
       }
     }
 
-    private byte indexOf(byte b) {
+    public byte indexOf(byte b) {
       return (byte) indexArray[((int) b) & 0xff];
     }
 
-    private byte charAt(int i) {
-      return (byte) charArray[i];
+    public byte charAt(byte i) {
+      return (byte) charArray[((int) i) & 0xff];
     }
 
-    private void moveToFront(int k) {
+    public void moveToFront(int k) {
       if (k > 0) {
         int swap = charArray[k];
         for (int i = k; i > 0; i--) {
