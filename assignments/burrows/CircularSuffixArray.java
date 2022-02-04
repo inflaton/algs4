@@ -4,8 +4,8 @@ import edu.princeton.cs.algs4.StdOut;
 public class CircularSuffixArray {
 
   private static class IndexedSuffix implements Comparable<IndexedSuffix> {
-    private int index;
-    private String suffix;
+    private final int index;
+    private final String suffix;
 
     public IndexedSuffix(int i, char[] chars) {
       index = i;
