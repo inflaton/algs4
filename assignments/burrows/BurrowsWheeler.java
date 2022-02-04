@@ -1,6 +1,4 @@
-import edu.princeton.cs.algs4.BinaryStdIn;
-import edu.princeton.cs.algs4.BinaryStdOut;
-import edu.princeton.cs.algs4.MergeX;
+import edu.princeton.cs.algs4.*;
 
 public class BurrowsWheeler {
   // apply Burrows-Wheeler transform,
@@ -27,6 +25,23 @@ public class BurrowsWheeler {
   // apply Burrows-Wheeler inverse transform,
   // reading from standard input and writing to standard output
   public static void inverseTransform() {
+    bruteForce();
+  }
+
+  public static void inverseTransformTimed(boolean bruteForce) {
+    Stopwatch sw = new Stopwatch();
+
+    if (bruteForce) {
+      bruteForce();
+    } else {
+      inverseTransform();
+    }
+
+    StdOut.println("\nbruteForce: " + bruteForce + "\nelapsedTime: " + sw.elapsedTime());
+    BinaryStdOut.close();
+  }
+
+  private static void bruteForce() {
     final int first = BinaryStdIn.readInt();
     String input = BinaryStdIn.readString();
     char[] t = input.toCharArray();
@@ -60,7 +75,7 @@ public class BurrowsWheeler {
     }
 
     BinaryStdOut.write(String.valueOf(output));
-    BinaryStdOut.close();
+    BinaryStdOut.flush();
   }
 
   // if args[0] is "-", apply Burrows-Wheeler transform
@@ -70,6 +85,10 @@ public class BurrowsWheeler {
       transform();
     } else if (args[0].equals("+")) {
       inverseTransform();
+    } else if (args[0].equals("a")) {
+      inverseTransformTimed(false);
+    } else if (args[0].equals("b")) {
+      inverseTransformTimed(true);
     }
   }
 }
