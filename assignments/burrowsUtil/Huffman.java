@@ -47,7 +47,8 @@ public class Huffman {
   private static class Node implements Comparable<Node> {
     private final char ch;
     private final int freq;
-    private final Node left, right;
+    private final Node left;
+    private final Node right;
 
     Node(char ch, int freq, Node left, Node right) {
       this.ch = ch;
