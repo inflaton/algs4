@@ -7,12 +7,9 @@ public class BurrowsWheeler {
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
   public static void transform() {
-    StringBuilder sb = new StringBuilder();
-    while (!BinaryStdIn.isEmpty()) {
-      sb.append(BinaryStdIn.readChar());
-    }
-    int length = sb.length();
-    CircularSuffixArray csa = new CircularSuffixArray(sb.toString());
+    String input = BinaryStdIn.readString();
+    int length = input.length();
+    CircularSuffixArray csa = new CircularSuffixArray(input);
 
     // find "first" and output
     for (int i = 0; i < length; i++) {
@@ -30,7 +27,7 @@ public class BurrowsWheeler {
       // get the index of its last character
       int lastIndex = index == 0 ? length - 1 : index - 1;
       // append these characters, and then we get "t"
-      BinaryStdOut.write(sb.charAt(lastIndex));
+      BinaryStdOut.write(input.charAt(lastIndex));
     }
 
     BinaryStdOut.close();
@@ -41,10 +38,7 @@ public class BurrowsWheeler {
   public static void inverseTransform() {
     // input
     int first = BinaryStdIn.readInt();
-    StringBuilder t = new StringBuilder();
-    while (!BinaryStdIn.isEmpty()) {
-      t.append(BinaryStdIn.readChar());
-    }
+    String t = BinaryStdIn.readString();
     int length = t.length();
 
     IndexMinPQ<Long> pq = new IndexMinPQ<>(length);
