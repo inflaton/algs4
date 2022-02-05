@@ -4,54 +4,69 @@ import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class BurrowsWheeler {
 
+  private static final int R = 256;
+
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
   public static void transform() {
-    String input = BinaryStdIn.readString();
-    char[] output = new char[input.length()];
-    CircularSuffixArray circularSuffixArray = new CircularSuffixArray(input);
-    for (int i = 0; i < input.length(); i++) {
-      int index = circularSuffixArray.index(i);
-      if (index == 0) {
+    StringBuilder sb = new StringBuilder();
+    while (!BinaryStdIn.isEmpty()) {
+      sb.append(BinaryStdIn.readChar());
+    }
+    int length = sb.length();
+    CircularSuffixArray csa = new CircularSuffixArray(sb.toString());
+
+    // find "first" and output
+    for (int i = 0; i < length; i++) {
+      if (csa.index(i) == 0) {
+        // write a 32-bit int
         BinaryStdOut.write(i);
-        index = input.length() - 1;
-      } else {
-        index--;
+        break;
       }
-      output[i] = input.charAt(index);
     }
 
-    BinaryStdOut.write(String.valueOf(output));
+    // find the string "t"
+    for (int i = 0; i < length; i++) {
+      // the i-th original suffix string
+      int index = csa.index(i);
+      // get the index of its last character
+      int lastIndex = index == 0 ? length - 1 : index - 1;
+      // append these characters, and then we get "t"
+      BinaryStdOut.write(sb.charAt(lastIndex));
+    }
+
     BinaryStdOut.close();
   }
 
   // apply Burrows-Wheeler inverse transform,
   // reading from standard input and writing to standard output
   public static void inverseTransform() {
-    final int first = BinaryStdIn.readInt();
-    String input = BinaryStdIn.readString();
-    char[] t = input.toCharArray();
+    // input
+    int first = BinaryStdIn.readInt();
+    StringBuilder t = new StringBuilder();
+    while (!BinaryStdIn.isEmpty()) {
+      t.append(BinaryStdIn.readChar());
+    }
+    int length = t.length();
 
-    IndexMinPQ<Long> pq = new IndexMinPQ<>(input.length());
+    IndexMinPQ<Long> pq = new IndexMinPQ<>(length);
     int i;
-    for (i = 0; i < t.length; i++) {
-      long key = ((long) t[i] << Integer.SIZE) | i;
+    for (i = 0; i < length; i++) {
+      long key = ((long) t.charAt(i) << Integer.SIZE) | i;
       pq.insert(i, key);
     }
 
-    char[] s = new char[t.length];
-    int[] next = new int[t.length];
+    int[] next = new int[length];
     i = 0;
     while (!pq.isEmpty()) {
-      s[i] = (char) (pq.minKey() >> Integer.SIZE);
       next[i] = pq.delMin();
       i++;
     }
 
-    int pointer = first;
-    for (i = 0; i < t.length; i++) {
-      BinaryStdOut.write((byte) s[pointer]);
-      pointer = next[pointer];
+    // output
+    for (i = 0; i < length; i++) {
+      BinaryStdOut.write(t.charAt(next[first]));
+      first = next[first];
     }
     BinaryStdOut.flush();
   }
