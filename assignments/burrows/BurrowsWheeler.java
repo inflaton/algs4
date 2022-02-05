@@ -1,35 +1,9 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
-import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class BurrowsWheeler {
 
-  private static class Node implements Comparable<Node> {
-    private final int index;
-    private final char key;
-
-    public Node(int index, char key) {
-      this.index = index;
-      this.key = key;
-    }
-
-    public int getIndex() {
-      return index;
-    }
-
-    public char getKey() {
-      return key;
-    }
-
-    @Override
-    public int compareTo(Node that) {
-      int r = Character.compare(this.key, that.key);
-      if (r == 0) {
-        r = Integer.compare(this.index, that.index);
-      }
-      return r;
-    }
-  }
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
   public static void transform() {
@@ -58,19 +32,19 @@ public class BurrowsWheeler {
     String input = BinaryStdIn.readString();
     char[] t = input.toCharArray();
 
-    MinPQ<Node> pq = new MinPQ<>(input.length());
+    IndexMinPQ<Long> pq = new IndexMinPQ<>(input.length());
     int i;
     for (i = 0; i < t.length; i++) {
-      pq.insert(new Node(i, t[i]));
+      long key = ((long) t[i] << Integer.SIZE) | i;
+      pq.insert(i, key);
     }
 
     char[] s = new char[t.length];
     int[] next = new int[t.length];
     i = 0;
     while (!pq.isEmpty()) {
-      Node node = pq.delMin();
-      s[i] = node.getKey();
-      next[i] = node.getIndex();
+      s[i] = (char) (pq.minKey() >> Integer.SIZE);
+      next[i] = pq.delMin();
       i++;
     }
 
