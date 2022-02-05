@@ -4,8 +4,6 @@ import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class BurrowsWheeler {
 
-  private static final int R = 256;
-
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
   public static void transform() {
