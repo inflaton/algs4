@@ -19,6 +19,7 @@
  *  ABRACADABRA!
  *
  ******************************************************************************/
+package com.inflaton.datastructures.compression;
 
 import com.inflaton.datastructures.priorityqueue.MinPQ;
 import edu.princeton.cs.algs4.BinaryStdIn;
@@ -80,7 +81,9 @@ public class Huffman {
 
     // tabulate frequency counts
     int[] freq = new int[R];
-    for (int i = 0; i < input.length; i++) freq[input[i]]++;
+    for (int i = 0; i < input.length; i++) {
+      freq[input[i]]++;
+    }
 
     // build Huffman trie
     Node root = buildTrie(freq);
@@ -113,10 +116,13 @@ public class Huffman {
 
   // build the Huffman trie given frequencies
   private static Node buildTrie(int[] freq) {
-
-    // initialze priority queue with singleton trees
+    // initialize priority queue with singleton trees
     MinPQ<Node> pq = new MinPQ<Node>();
-    for (char c = 0; c < R; c++) if (freq[c] > 0) pq.insert(new Node(c, freq[c], null, null));
+    for (char c = 0; c < R; c++) {
+      if (freq[c] > 0) {
+        pq.insert(new Node(c, freq[c], null, null));
+      }
+    }
 
     // merge two smallest trees
     while (pq.size() > 1) {
@@ -125,6 +131,7 @@ public class Huffman {
       Node parent = new Node('\0', left.freq + right.freq, left, right);
       pq.insert(parent);
     }
+
     return pq.delMin();
   }
 
@@ -178,10 +185,13 @@ public class Huffman {
   private static Node readTrie() {
     boolean isLeaf = BinaryStdIn.readBoolean();
     if (isLeaf) {
-      return new Node(BinaryStdIn.readChar(), -1, null, null);
-    } else {
-      return new Node('\0', -1, readTrie(), readTrie());
+      char ch = BinaryStdIn.readChar();
+      return new Node(ch, -1, null, null);
     }
+
+    Node x = readTrie();
+    Node y = readTrie();
+    return new Node('\0', -1, x, y);
   }
 
   /**
