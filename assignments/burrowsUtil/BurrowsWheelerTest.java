@@ -4,23 +4,61 @@ public class BurrowsWheelerTest {
 
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
-  public static void transform_9th() {
+  public static void transform_12th() {
     String input = BinaryStdIn.readString();
-    char[] output = new char[input.length()];
-    CircularSuffixArray circularSuffixArray = new CircularSuffixArray(input);
-    for (int i = 0; i < input.length(); i++) {
-      int index = circularSuffixArray.index(i);
-      if (index == 0) {
+    int length = input.length();
+    CircularSuffixArray csa = new CircularSuffixArray(input);
+
+    // find "first" and output
+    for (int i = 0; i < length; i++) {
+      if (csa.index(i) == 0) {
+        // write a 32-bit int
         BinaryStdOut.write(i);
-        index = input.length() - 1;
-      } else {
-        index--;
+        break;
       }
-      output[i] = input.charAt(index);
     }
 
-    BinaryStdOut.write(String.valueOf(output));
+    // find the string "t"
+    for (int i = 0; i < length; i++) {
+      // the i-th original suffix string
+      int index = csa.index(i);
+      // get the index of its last character
+      int lastIndex = index == 0 ? length - 1 : index - 1;
+      // append these characters, and then we get "t"
+      BinaryStdOut.write(input.charAt(lastIndex));
+    }
+
     BinaryStdOut.close();
+  }
+
+  // apply Burrows-Wheeler inverse transform,
+  // reading from standard input and writing to standard output
+  public static void inverseTransform_12th() {
+    // input
+    int first = BinaryStdIn.readInt();
+    String t = BinaryStdIn.readString();
+    int length = t.length();
+
+    IndexMinPQ<Long> pq = new IndexMinPQ<>(length);
+    int i;
+    for (i = 0; i < length; i++) {
+      long key = ((long) t.charAt(i) << Integer.SIZE) | i;
+      pq.insert(i, key);
+    }
+
+    int[] next = new int[length];
+    i = 0;
+    while (!pq.isEmpty()) {
+      next[i] = pq.delMin();
+      i++;
+    }
+
+    // output
+    for (i = 0; i < length; i++) {
+      BinaryStdOut.write(t.charAt(next[first]));
+      first = next[first];
+    }
+    BinaryStdOut.flush();
   }
 
   public static void inverseTransformTimed(String m) {
@@ -29,44 +67,13 @@ public class BurrowsWheelerTest {
     if (m.equals("b")) {
       bruteForce();
     } else if (m.equals("c")) {
-      inverseTransform_9th();
+      inverseTransform_12th();
     } else {
       BurrowsWheeler.inverseTransform();
     }
 
     StdOut.println("\nmode: " + m + "\nelapsedTime: " + sw.elapsedTime());
     BinaryStdOut.close();
-  }
-
-  // apply Burrows-Wheeler inverse transform,
-  // reading from standard input and writing to standard output
-  private static void inverseTransform_9th() {
-    final int first = BinaryStdIn.readInt();
-    String input = BinaryStdIn.readString();
-    char[] t = input.toCharArray();
-
-    IndexMinPQ<Long> pq = new IndexMinPQ<>(input.length());
-    int i;
-    for (i = 0; i < t.length; i++) {
-      long key = ((long) t[i] << Integer.SIZE) | i;
-      pq.insert(i, key);
-    }
-
-    char[] s = new char[t.length];
-    int[] next = new int[t.length];
-    i = 0;
-    while (!pq.isEmpty()) {
-      s[i] = (char) (pq.minKey() >> Integer.SIZE);
-      next[i] = pq.delMin();
-      i++;
-    }
-
-    int pointer = first;
-    for (i = 0; i < t.length; i++) {
-      BinaryStdOut.write((byte) s[pointer]);
-      pointer = next[pointer];
-    }
-    BinaryStdOut.flush();
   }
 
   private static void bruteForce() {

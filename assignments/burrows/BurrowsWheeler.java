@@ -1,8 +1,9 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
-import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class BurrowsWheeler {
+
+  private static final int R = 256;
 
   // apply Burrows-Wheeler transform,
   // reading from standard input and writing to standard output
@@ -41,22 +42,25 @@ public class BurrowsWheeler {
     String t = BinaryStdIn.readString();
     int length = t.length();
 
-    IndexMinPQ<Long> pq = new IndexMinPQ<>(length);
-    int i;
-    for (i = 0; i < length; i++) {
-      long key = ((long) t.charAt(i) << Integer.SIZE) | i;
-      pq.insert(i, key);
+    // compute frequency counts
+    int[] count = new int[R + 1];
+    for (int i = 0; i < length; i++) {
+      count[t.charAt(i) + 1]++;
     }
-
+    // transform counts to indices
+    for (int i = 0; i < R; i++) {
+      count[i + 1] += count[i];
+    }
+    // generate next array
     int[] next = new int[length];
-    i = 0;
-    while (!pq.isEmpty()) {
-      next[i] = pq.delMin();
-      i++;
+    for (int i = 0; i < length; i++) {
+      char c = t.charAt(i);
+      next[count[c]] = i;
+      count[c]++;
     }
 
     // output
-    for (i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
       BinaryStdOut.write(t.charAt(next[first]));
       first = next[first];
     }
