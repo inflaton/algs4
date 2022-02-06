@@ -38,10 +38,6 @@
 
 package edu.princeton.cs.algs4;
 
-import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
 /**
  * The {@code TernarySearchTrie} class represents an symbol table of key-value pairs, with string
  * keys and generic values. It supports the usual <em>put</em>, <em>get</em>, <em>contains</em>,

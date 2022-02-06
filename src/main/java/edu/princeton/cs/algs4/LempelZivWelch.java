@@ -13,10 +13,6 @@
 
 package edu.princeton.cs.algs4;
 
-import edu.princeton.cs.algs4.TernarySearchTrie;
-import edu.princeton.cs.algs4.BinaryStdIn;
-import edu.princeton.cs.algs4.BinaryStdOut;
-
 /**
  * The {@code LempelZivWelch} class provides static methods for compressing and expanding a binary
  * input using LempelZivWelch compression over the 8-bit extended ASCII alphabet with 12-bit
